@@ -1,0 +1,8 @@
+{
+  "name": "BlackWallet-node",
+  "version": "1.0.0",
+  "description": "blackWallet's back-end",
+  "main": "index.js",
+  "author": "Cyro Renato",
+  "license": "MIT"
+}
