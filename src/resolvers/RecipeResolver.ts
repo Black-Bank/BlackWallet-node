@@ -3,7 +3,6 @@ import { recipeData } from "../database/recipedata";
 import { Recipe } from "../entities/Recipe";
 import { RecipeDataType } from "../types/RecipeDataType";
 import { v4 as uuidv4 } from "uuid";
-import { argsToArgsConfig } from "graphql/type/definition";
 
 @Resolver()
 export class RecipeResolver {
