@@ -30,13 +30,14 @@ export class WalletResolver {
   async createTransaction(
     @Arg("addressFrom") addressFrom: string,
     @Arg("privateKey") privateKey: string,
-    @Arg("addressTo") addressTo: string
+    @Arg("addressTo") addressTo: string,
+    @Arg("value") value: number
   ): Promise<string> {
     const tx = await web3.eth.accounts.signTransaction(
       {
         from: addressFrom,
         to: addressTo,
-        value: web3.utils.toWei("0.01", "ether"),
+        value: web3.utils.toWei(String(value), "ether"),
         chain: "rinkeby",
         hardfork: "London",
         gas: "210000",
