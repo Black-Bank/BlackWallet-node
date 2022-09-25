@@ -3,6 +3,7 @@ import { walletData } from "../database/wallet";
 import { Wallet } from "../entities/Wallet";
 import Web3 from "web3";
 import { InsertWallet } from "../database/insert";
+import { FindWallets } from "../database/findWallets";
 
 const web3 = new Web3(
   "https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490"
@@ -13,13 +14,17 @@ const web3 = new Web3(
 @Resolver()
 export class WalletResolver {
   @Query(() => [Wallet])
-  getWallets(): Array<Wallet> {
+  async getWallets(
+    @Arg("key") key: string,
+    @Arg("HashId") HashId: string
+  ): Promise<Array<Wallet>> {
     /*console.log(
       "SAVE BUT DO NOT SHARE THIS:",
       wallet.privateKey.toString("hex")
     );
     console.log("Address:", wallet.publicAddress);*/
-    return walletData;
+    //console.log("init");
+    return await FindWallets(HashId, key);
   }
 
   @Mutation(() => Wallet)

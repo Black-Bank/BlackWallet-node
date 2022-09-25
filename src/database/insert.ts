@@ -4,7 +4,7 @@ export function InsertWallet(
     address: string;
     privateKey: string;
   },
-  IdHash: string,
+  HashId: string,
   key: string
 ) {
   const mongodb = require("mongodb").MongoClient;
@@ -15,7 +15,7 @@ export function InsertWallet(
       throw erro;
     }
     const dbo = banco.db("CFBcursos");
-    let query = { idHash: IdHash };
+    let query = { idHash: HashId };
 
     let carteiras = [];
 
