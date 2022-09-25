@@ -2,19 +2,32 @@ import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
 import { walletData } from "../database/wallet";
 import { Wallet } from "../entities/Wallet";
 import Web3 from "web3";
+import { InsertWallet } from "../database/insert";
 
 const web3 = new Web3(
   "https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490"
 );
+
+//const CoinKey = require("coinkey");
+//const wallet = new CoinKey.createRandom();
 @Resolver()
 export class WalletResolver {
   @Query(() => [Wallet])
   getWallets(): Array<Wallet> {
+    /*console.log(
+      "SAVE BUT DO NOT SHARE THIS:",
+      wallet.privateKey.toString("hex")
+    );
+    console.log("Address:", wallet.publicAddress);*/
     return walletData;
   }
 
   @Mutation(() => Wallet)
-  createWallet(@Arg("name") name: string): Wallet {
+  createEthWallet(
+    @Arg("key") key: string,
+    @Arg("name") name: string,
+    @Arg("HashId") HashId: string
+  ): Wallet {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
     wallet.add(account.privateKey);
@@ -23,7 +36,7 @@ export class WalletResolver {
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };
-    walletData.push(newWallet);
+    InsertWallet(newWallet, HashId, key);
     return newWallet;
   }
   @Mutation(() => String)
