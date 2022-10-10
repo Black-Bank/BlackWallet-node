@@ -31,6 +31,7 @@ export class WalletResolver {
   createEthWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
+    @Arg("type") type: string,
     @Arg("HashId") HashId: string
   ): Wallet {
     const wallet = web3.eth.accounts.wallet.create(0);
@@ -38,6 +39,7 @@ export class WalletResolver {
     wallet.add(account.privateKey);
     let newWallet = {
       name: name,
+      type: type,
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };
