@@ -39,7 +39,7 @@ export class WalletResolver {
     wallet.add(account.privateKey);
     let newWallet = {
       name: name,
-      type: type,
+      WalletType: type,
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };

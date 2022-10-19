@@ -5,7 +5,7 @@ export class Wallet {
   @Field()
   name: string;
   @Field()
-  type: string;
+  WalletType: string;
   @Field()
   address: string;
   @Field()
