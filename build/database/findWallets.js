@@ -4,10 +4,11 @@ exports.FindWallets = void 0;
 async function FindWallets(HashId, key) {
     const mongodb = require("mongodb").MongoClient;
     const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+    const herokuURI = process.env.MONGODB_URI;
     let result = [];
     function data() {
         return new Promise((resolve) => {
-            mongodb.connect(url, (erro, banco) => {
+            mongodb.connect(herokuURI || url, (erro, banco) => {
                 if (erro) {
                     throw erro;
                 }

@@ -27,21 +27,9 @@ const web3 = new web3_1.default("https://rinkeby.infura.io/v3/1b8c4e37898645a485
 //const wallet = new CoinKey.createRandom();
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
-        /*console.log(
-          "SAVE BUT DO NOT SHARE THIS:",
-          wallet.privateKey.toString("hex")
-        );
-        console.log("Address:", wallet.publicAddress);*/
-        //console.log("init");
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
     getTest() {
-        /*console.log(
-          "SAVE BUT DO NOT SHARE THIS:",
-          wallet.privateKey.toString("hex")
-        );
-        console.log("Address:", wallet.publicAddress);*/
-        //console.log("init");
         return "Test sucess";
     }
     createEthWallet(key, name, type, HashId) {
