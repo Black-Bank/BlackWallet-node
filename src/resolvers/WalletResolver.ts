@@ -18,13 +18,12 @@ export class WalletResolver {
     @Arg("key") key: string,
     @Arg("HashId") HashId: string
   ): Promise<Array<Wallet>> {
-    /*console.log(
-      "SAVE BUT DO NOT SHARE THIS:",
-      wallet.privateKey.toString("hex")
-    );
-    console.log("Address:", wallet.publicAddress);*/
-    //console.log("init");
     return await FindWallets(HashId, key);
+  }
+
+  @Query(() => String)
+  getTest(): string {
+    return "Test sucess";
   }
 
   @Mutation(() => Wallet)

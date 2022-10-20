@@ -10,6 +10,7 @@ async function bootstrap() {
         schema: await (0, type_graphql_1.buildSchema)({
             resolvers: [WalletResolver_1.WalletResolver],
         }),
+        introspection: true,
     });
     server.listen(Number.parseInt(process.env.PORT) || 4000);
 }
