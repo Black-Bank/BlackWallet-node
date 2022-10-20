@@ -23,7 +23,9 @@ export class WalletResolver {
 
   @Query(() => String)
   getTest(): string {
-    return "Test sucess";
+    const url = process.env.MONGODB_URI ? process.env.MONGODB_URI : `error`;
+
+    return "Test sucess: " + url;
   }
 
   @Mutation(() => Wallet)
