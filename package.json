@@ -8,7 +8,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon build/index.js",
-    "start": "node build/index.js"
+    "start": "tsc || node build/index.js"
   },
   "dependencies": {
     "apollo-server": "^3.10.2",
