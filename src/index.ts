@@ -8,6 +8,7 @@ export async function bootstrap() {
     schema: await buildSchema({
       resolvers: [WalletResolver],
     }),
+    introspection: true,
   });
   server.listen(Number.parseInt(process.env.PORT) || 4000);
 }
