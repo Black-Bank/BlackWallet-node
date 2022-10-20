@@ -9,7 +9,7 @@ export async function bootstrap() {
       resolvers: [WalletResolver],
     }),
   });
-  server.listen(4000);
+  server.listen(Number.parseInt(process.env.PORT) || 4000);
 }
 
 bootstrap();
