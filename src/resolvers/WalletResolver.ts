@@ -21,13 +21,6 @@ export class WalletResolver {
     return await FindWallets(HashId, key);
   }
 
-  @Query(() => String)
-  getTest(): string {
-    const url = process.env.MONGODB_URI ? process.env.MONGODB_URI : `error`;
-
-    return "Test sucess: " + url;
-  }
-
   @Mutation(() => Wallet)
   createEthWallet(
     @Arg("key") key: string,

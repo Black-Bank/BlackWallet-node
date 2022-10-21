@@ -30,7 +30,8 @@ let WalletResolver = class WalletResolver {
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
     getTest() {
-        return "Test sucess";
+        const url = process.env.MONGODB_URI ? process.env.MONGODB_URI : `error`;
+        return "Test sucess: " + url;
     }
     createEthWallet(key, name, type, HashId) {
         const wallet = web3.eth.accounts.wallet.create(0);
