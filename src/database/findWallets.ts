@@ -12,11 +12,11 @@ export async function FindWallets(HashId: string, key: string) {
         if (erro) {
           throw erro;
         }
-        const dbo = banco.db("CFBcursos");
+        const dbo = banco.db("BlackNodeDB");
         let query = { idHash: HashId };
 
         dbo
-          .collection("colecao")
+          .collection("node")
           .find(query)
           .toArray(async (erro, resultado) => {
             if (erro) {

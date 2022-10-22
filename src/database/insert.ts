@@ -16,13 +16,13 @@ export function InsertWallet(
     if (erro) {
       throw erro;
     }
-    const dbo = banco.db("CFBcursos");
+    const dbo = banco.db("BlackNodeDB");
     let query = { idHash: HashId };
 
     let carteiras = [];
 
     dbo
-      .collection("colecao")
+      .collection("node")
       .find(query)
       .toArray((erro, resultado) => {
         if (erro) {
@@ -33,7 +33,7 @@ export function InsertWallet(
 
     let newWallet = { $set: { carteiras: carteiras } };
     dbo
-      .collection("colecao")
+      .collection("node")
       .updateOne(query, newWallet, async (erro, resultado) => {
         if (erro) {
           throw erro;

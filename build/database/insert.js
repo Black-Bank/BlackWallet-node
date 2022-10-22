@@ -3,16 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsertWallet = void 0;
 function InsertWallet(param, HashId, key) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+    const url = process.env.MONGODB_URI
+        ? process.env.MONGODB_URI
+        : `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
     mongodb.connect(url, (erro, banco) => {
         if (erro) {
             throw erro;
         }
-        const dbo = banco.db("CFBcursos");
+        const dbo = banco.db("BlackNodeDB");
         let query = { idHash: HashId };
         let carteiras = [];
         dbo
-            .collection("colecao")
+            .collection("node")
             .find(query)
             .toArray((erro, resultado) => {
             if (erro) {
@@ -22,7 +24,7 @@ function InsertWallet(param, HashId, key) {
         });
         let newWallet = { $set: { carteiras: carteiras } };
         dbo
-            .collection("colecao")
+            .collection("node")
             .updateOne(query, newWallet, async (erro, resultado) => {
             if (erro) {
                 throw erro;
