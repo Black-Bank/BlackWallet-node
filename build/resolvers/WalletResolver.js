@@ -29,10 +29,6 @@ let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
-    getTest() {
-        const url = process.env.MONGODB_URI ? process.env.MONGODB_URI : `error`;
-        return "Test sucess: " + url;
-    }
     createEthWallet(key, name, type, HashId) {
         const wallet = web3.eth.accounts.wallet.create(0);
         const account = web3.eth.accounts.create();
@@ -75,12 +71,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "getWallets", null);
-__decorate([
-    (0, type_graphql_1.Query)(() => String),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
-], WalletResolver.prototype, "getTest", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Wallet_1.Wallet),
     __param(0, (0, type_graphql_1.Arg)("key")),
