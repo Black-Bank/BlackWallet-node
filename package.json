@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "apollo-server": "^3.10.2",
+    "bitcore-lib": "^8.25.40",
     "class-validator": "^0.13.2",
     "coinkey": "^3.0.0",
     "graphql": "15.8.0",

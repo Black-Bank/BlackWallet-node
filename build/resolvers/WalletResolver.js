@@ -22,6 +22,7 @@ const Wallet_1 = require("../entities/Wallet");
 const web3_1 = __importDefault(require("web3"));
 const insert_1 = require("../database/insert");
 const findWallets_1 = require("../database/findWallets");
+const bitcore_lib_1 = require("bitcore-lib");
 const web3 = new web3_1.default("https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490");
 //const CoinKey = require("coinkey");
 //const wallet = new CoinKey.createRandom();
@@ -29,15 +30,27 @@ let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
-    createEthWallet(key, name, type, HashId) {
+    createEthWallet(key, name, HashId) {
         const wallet = web3.eth.accounts.wallet.create(0);
         const account = web3.eth.accounts.create();
         wallet.add(account.privateKey);
         let newWallet = {
             name: name,
-            WalletType: type,
+            WalletType: "ETH",
             address: wallet[wallet.length - 1].address,
             privateKey: wallet[wallet.length - 1].privateKey,
+        };
+        (0, insert_1.InsertWallet)(newWallet, HashId, key);
+        return newWallet;
+    }
+    createBTCWallet(key, name, HashId) {
+        const privateKey = new bitcore_lib_1.PrivateKey();
+        const address = privateKey.toAddress();
+        let newWallet = {
+            name: name,
+            WalletType: "BTC",
+            address: address.toString(),
+            privateKey: privateKey.toString(),
         };
         (0, insert_1.InsertWallet)(newWallet, HashId, key);
         return newWallet;
@@ -75,12 +88,20 @@ __decorate([
     (0, type_graphql_1.Mutation)(() => Wallet_1.Wallet),
     __param(0, (0, type_graphql_1.Arg)("key")),
     __param(1, (0, type_graphql_1.Arg)("name")),
-    __param(2, (0, type_graphql_1.Arg)("type")),
-    __param(3, (0, type_graphql_1.Arg)("HashId")),
+    __param(2, (0, type_graphql_1.Arg)("HashId")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Wallet_1.Wallet)
 ], WalletResolver.prototype, "createEthWallet", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Wallet_1.Wallet),
+    __param(0, (0, type_graphql_1.Arg)("key")),
+    __param(1, (0, type_graphql_1.Arg)("name")),
+    __param(2, (0, type_graphql_1.Arg)("HashId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Wallet_1.Wallet)
+], WalletResolver.prototype, "createBTCWallet", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),
     __param(0, (0, type_graphql_1.Arg)("addressFrom")),

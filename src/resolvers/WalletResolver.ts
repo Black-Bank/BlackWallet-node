@@ -4,6 +4,7 @@ import { Wallet } from "../entities/Wallet";
 import Web3 from "web3";
 import { InsertWallet } from "../database/insert";
 import { FindWallets } from "../database/findWallets";
+import { PrivateKey } from "bitcore-lib";
 
 const web3 = new Web3(
   "https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490"
@@ -25,7 +26,6 @@ export class WalletResolver {
   createEthWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
-    @Arg("type") type: string,
     @Arg("HashId") HashId: string
   ): Wallet {
     const wallet = web3.eth.accounts.wallet.create(0);
@@ -33,9 +33,28 @@ export class WalletResolver {
     wallet.add(account.privateKey);
     let newWallet = {
       name: name,
-      WalletType: type,
+      WalletType: "ETH",
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
+    };
+    InsertWallet(newWallet, HashId, key);
+    return newWallet;
+  }
+
+  @Mutation(() => Wallet)
+  createBTCWallet(
+    @Arg("key") key: string,
+    @Arg("name") name: string,
+    @Arg("HashId") HashId: string
+  ): Wallet {
+    const privateKey = new PrivateKey();
+    const address = privateKey.toAddress();
+
+    let newWallet = {
+      name: name,
+      WalletType: "BTC",
+      address: address.toString(),
+      privateKey: privateKey.toString(),
     };
     InsertWallet(newWallet, HashId, key);
     return newWallet;

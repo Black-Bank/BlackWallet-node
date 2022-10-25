@@ -3,9 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindWallets = void 0;
 async function FindWallets(HashId, key) {
     const mongodb = require("mongodb").MongoClient;
-    const url = process.env.MONGODB_URI
-        ? process.env.MONGODB_URI
-        : `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
     let result = [];
     function data() {
         return new Promise((resolve) => {

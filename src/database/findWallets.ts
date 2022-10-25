@@ -1,8 +1,6 @@
 export async function FindWallets(HashId: string, key: string) {
   const mongodb = require("mongodb").MongoClient;
-  const url = process.env.MONGODB_URI
-    ? process.env.MONGODB_URI
-    : `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
 
   let result = [];
 
