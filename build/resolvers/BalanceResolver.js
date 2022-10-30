@@ -21,8 +21,8 @@ let BalanceResolver = class BalanceResolver {
     async getBalance(key, HashId) {
         return await (0, findBalance_1.FindBalance)(HashId, key);
     }
-    RemoveBalance(key, HashId) {
-        (0, removeBalance_1.RemoveBalance)(HashId, key);
+    RemoveBalance(key, HashId, removeOption) {
+        (0, removeBalance_1.RemoveBalance)(HashId, key, removeOption);
         return true;
     }
 };
@@ -38,8 +38,9 @@ __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
     __param(0, (0, type_graphql_1.Arg)("key")),
     __param(1, (0, type_graphql_1.Arg)("HashId")),
+    __param(2, (0, type_graphql_1.Arg)("removeOption")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Boolean)
 ], BalanceResolver.prototype, "RemoveBalance", null);
 BalanceResolver = __decorate([

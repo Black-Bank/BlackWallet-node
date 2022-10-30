@@ -15,9 +15,10 @@ export class BalanceResolver {
   @Mutation(() => Boolean)
   RemoveBalance(
     @Arg("key") key: string,
-    @Arg("HashId") HashId: string
+    @Arg("HashId") HashId: string,
+    @Arg("removeOption") removeOption: string
   ): boolean {
-    RemoveBalance(HashId, key);
+    RemoveBalance(HashId, key, removeOption);
     return true;
   }
 }
