@@ -15,7 +15,6 @@ export function RemoveBalance(HashId: string, key: string) {
           console.log(erro);
           throw erro;
         }
-        console.log(resultado);
         console.log("Balance removido");
         banco.close();
       });
