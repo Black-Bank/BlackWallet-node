@@ -30,11 +30,11 @@ let BalanceResolver = class BalanceResolver {
         const options = ["month", "week", "day"];
         let lastBalance = await (0, findBalance_1.FindBalance)(HashId, key);
         if (options.includes(insertOption)) {
-            (0, insertBalance_1.InsertBalance)(HashId, key, insertOption, newBalance, lastBalance);
+            (0, insertBalance_1.InsertBalance)(HashId, key, newBalance, lastBalance);
             return true;
         }
         else {
-            return `options error, the insert option ${insertOption} is missing on type month, week or day.`;
+            return `options error, the insert options ${insertOption} is missing on type month, week or day.`;
         }
     }
 };
