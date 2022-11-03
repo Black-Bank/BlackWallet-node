@@ -14,10 +14,6 @@ const type_graphql_1 = require("type-graphql");
 let Balance = class Balance {
 };
 __decorate([
-    (0, type_graphql_1.Field)(),
-    __metadata("design:type", String)
-], Balance.prototype, "idHash", void 0);
-__decorate([
     (0, type_graphql_1.Field)((type) => [Number]),
     __metadata("design:type", Array)
 ], Balance.prototype, "month", void 0);

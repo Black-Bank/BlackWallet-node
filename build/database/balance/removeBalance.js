@@ -13,7 +13,7 @@ function RemoveBalance(HashId, key, removeOption) {
         if (removeOption === "month") {
             dbo
                 .collection("TotalBalance")
-                .updateOne(query, { $pop: { month: 1 } }, async (erro, resultado) => {
+                .updateOne(query, { $pop: { month: -1 } }, async (erro, resultado) => {
                 if (erro) {
                     console.log(erro);
                     throw erro;
@@ -25,7 +25,7 @@ function RemoveBalance(HashId, key, removeOption) {
         else if (removeOption === "week") {
             dbo
                 .collection("TotalBalance")
-                .updateOne(query, { $pop: { week: 1 } }, async (erro, resultado) => {
+                .updateOne(query, { $pop: { week: -1 } }, async (erro, resultado) => {
                 if (erro) {
                     console.log(erro);
                     throw erro;
@@ -37,7 +37,7 @@ function RemoveBalance(HashId, key, removeOption) {
         else if (removeOption === "day") {
             dbo
                 .collection("TotalBalance")
-                .updateOne(query, { $pop: { day: 1 } }, async (erro, resultado) => {
+                .updateOne(query, { $pop: { day: -1 } }, async (erro, resultado) => {
                 if (erro) {
                     console.log(erro);
                     throw erro;

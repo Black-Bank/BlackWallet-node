@@ -30,7 +30,7 @@ async function FindBalance(HashId, key) {
     }
     async function ReturnData() {
         await data();
-        return result[0];
+        return result[0].financialHistory;
     }
     return await ReturnData();
 }
