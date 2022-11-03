@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BalanceResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const findBalance_1 = require("../database/balance/findBalance");
+const insertBalance_1 = require("../database/balance/insertBalance");
 const removeBalance_1 = require("../database/balance/removeBalance");
 const balance_1 = require("../entities/balance");
 let BalanceResolver = class BalanceResolver {
@@ -24,6 +25,17 @@ let BalanceResolver = class BalanceResolver {
     RemoveBalance(key, HashId, removeOption) {
         (0, removeBalance_1.RemoveBalance)(HashId, key, removeOption);
         return true;
+    }
+    async InsertBalance(key, HashId, insertOption, newBalance) {
+        const options = ["month", "week", "day"];
+        let lastBalance = await (0, findBalance_1.FindBalance)(HashId, key);
+        if (options.includes(insertOption)) {
+            (0, insertBalance_1.InsertBalance)(HashId, key, insertOption, newBalance, lastBalance);
+            return true;
+        }
+        else {
+            return `options error, the insert option ${insertOption} is missing on type month, week or day.`;
+        }
     }
 };
 __decorate([
@@ -43,6 +55,16 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Boolean)
 ], BalanceResolver.prototype, "RemoveBalance", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean || String),
+    __param(0, (0, type_graphql_1.Arg)("key")),
+    __param(1, (0, type_graphql_1.Arg)("HashId")),
+    __param(2, (0, type_graphql_1.Arg)("InsertOption")),
+    __param(3, (0, type_graphql_1.Arg)("NewBalance")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Number]),
+    __metadata("design:returntype", Promise)
+], BalanceResolver.prototype, "InsertBalance", null);
 BalanceResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], BalanceResolver);
