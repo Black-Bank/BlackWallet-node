@@ -33,7 +33,7 @@ export class BalanceResolver {
     const options = ["month", "week", "day"];
     let lastBalance = await FindBalance(HashId, key);
     if (options.includes(insertOption)) {
-      InsertBalance(HashId, key, insertOption, newBalance, lastBalance);
+      InsertBalance(HashId, key, newBalance, lastBalance);
 
       return true;
     } else {

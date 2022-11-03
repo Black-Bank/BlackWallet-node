@@ -3,7 +3,6 @@ import { Balance } from "../../entities/balance";
 export function InsertBalance(
   HashId: string,
   key: string,
-  insertOption: string,
   newBalance: number,
   lastBalance: Balance
 ) {
