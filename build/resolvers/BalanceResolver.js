@@ -26,16 +26,11 @@ let BalanceResolver = class BalanceResolver {
         (0, removeBalance_1.RemoveBalance)(HashId, key, removeOption);
         return true;
     }
-    async InsertBalance(key, HashId, insertOption, newBalance) {
+    async InsertBalance(key, HashId, newBalance) {
         const options = ["month", "week", "day"];
         let lastBalance = await (0, findBalance_1.FindBalance)(HashId, key);
-        if (options.includes(insertOption)) {
-            (0, insertBalance_1.InsertBalance)(HashId, key, newBalance, lastBalance);
-            return true;
-        }
-        else {
-            return `options error, the insert options ${insertOption} is missing on type month, week or day.`;
-        }
+        (0, insertBalance_1.InsertBalance)(HashId, key, newBalance, lastBalance);
+        return true;
     }
 };
 __decorate([
@@ -59,10 +54,9 @@ __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean || String),
     __param(0, (0, type_graphql_1.Arg)("key")),
     __param(1, (0, type_graphql_1.Arg)("HashId")),
-    __param(2, (0, type_graphql_1.Arg)("InsertOption")),
-    __param(3, (0, type_graphql_1.Arg)("NewBalance")),
+    __param(2, (0, type_graphql_1.Arg)("NewBalance")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Number]),
+    __metadata("design:paramtypes", [String, String, Number]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "InsertBalance", null);
 BalanceResolver = __decorate([

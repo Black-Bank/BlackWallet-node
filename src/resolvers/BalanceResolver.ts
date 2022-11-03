@@ -27,17 +27,13 @@ export class BalanceResolver {
   async InsertBalance(
     @Arg("key") key: string,
     @Arg("HashId") HashId: string,
-    @Arg("InsertOption") insertOption: string,
     @Arg("NewBalance") newBalance: number
   ): Promise<boolean | string> {
     const options = ["month", "week", "day"];
     let lastBalance = await FindBalance(HashId, key);
-    if (options.includes(insertOption)) {
-      InsertBalance(HashId, key, newBalance, lastBalance);
 
-      return true;
-    } else {
-      return `options error, the insert options ${insertOption} is missing on type month, week or day.`;
-    }
+    InsertBalance(HashId, key, newBalance, lastBalance);
+
+    return true;
   }
 }
