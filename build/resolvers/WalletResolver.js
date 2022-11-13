@@ -26,7 +26,6 @@ const bitcore_lib_1 = require("bitcore-lib");
 const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
-        console.log(HashId, key);
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
     async createEthWallet(key, name, HashId) {

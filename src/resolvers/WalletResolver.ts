@@ -17,7 +17,6 @@ export class WalletResolver {
     @Arg("key") key: string,
     @Arg("HashId") HashId: string
   ): Promise<Array<Wallet>> {
-    console.log(HashId, key);
     return await FindWallets(HashId, key);
   }
 
