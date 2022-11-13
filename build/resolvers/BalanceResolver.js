@@ -27,7 +27,6 @@ let BalanceResolver = class BalanceResolver {
         return true;
     }
     async InsertBalance(key, HashId, newBalance) {
-        const options = ["month", "week", "day"];
         let lastBalance = await (0, findBalance_1.FindBalance)(HashId, key);
         (0, insertBalance_1.InsertBalance)(HashId, key, newBalance, lastBalance);
         return true;

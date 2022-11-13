@@ -7,11 +7,9 @@ import { FindWallets } from "../database/findWallets";
 import { PrivateKey } from "bitcore-lib";
 
 const web3 = new Web3(
-  "https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490"
+  "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
 
-//const CoinKey = require("coinkey");
-//const wallet = new CoinKey.createRandom();
 @Resolver()
 export class WalletResolver {
   @Query(() => [Wallet])
@@ -19,15 +17,16 @@ export class WalletResolver {
     @Arg("key") key: string,
     @Arg("HashId") HashId: string
   ): Promise<Array<Wallet>> {
+    console.log(HashId, key);
     return await FindWallets(HashId, key);
   }
 
   @Mutation(() => Wallet)
-  createEthWallet(
+  async createEthWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
     @Arg("HashId") HashId: string
-  ): Wallet {
+  ): Promise<Wallet> {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
     wallet.add(account.privateKey);
@@ -37,16 +36,17 @@ export class WalletResolver {
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };
-    InsertWallet(newWallet, HashId, key);
+    let lastWallet = await FindWallets(HashId, key);
+    InsertWallet(newWallet, HashId, key, lastWallet);
     return newWallet;
   }
 
   @Mutation(() => Wallet)
-  createBTCWallet(
+  async createBTCWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
     @Arg("HashId") HashId: string
-  ): Wallet {
+  ): Promise<Wallet> {
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
 
@@ -56,7 +56,8 @@ export class WalletResolver {
       address: address.toString(),
       privateKey: privateKey.toString(),
     };
-    InsertWallet(newWallet, HashId, key);
+    let lastWallet = await FindWallets(HashId, key);
+    InsertWallet(newWallet, HashId, key, lastWallet);
     return newWallet;
   }
   @Mutation(() => String)

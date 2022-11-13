@@ -29,7 +29,6 @@ export class BalanceResolver {
     @Arg("HashId") HashId: string,
     @Arg("NewBalance") newBalance: number
   ): Promise<boolean | string> {
-    const options = ["month", "week", "day"];
     let lastBalance = await FindBalance(HashId, key);
 
     InsertBalance(HashId, key, newBalance, lastBalance);

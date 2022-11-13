@@ -1,6 +1,6 @@
 export async function FindWallets(HashId: string, key: string) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
 
   let result = [];
 
@@ -10,18 +10,19 @@ export async function FindWallets(HashId: string, key: string) {
         if (erro) {
           throw erro;
         }
-        const dbo = banco.db("BlackNodeDB");
+
+        const dbo = banco.db("userInfo");
         let query = { idHash: HashId };
 
         dbo
-          .collection("node")
+          .collection("master")
           .find(query)
           .toArray(async (erro, resultado) => {
             if (erro) {
               throw erro;
             }
             const res = resultado;
-            result.push(res[0].carteiras);
+            result.push(res[0]?.carteiras);
             resolve();
             banco.close();
           });

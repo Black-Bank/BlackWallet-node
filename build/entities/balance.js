@@ -25,6 +25,10 @@ __decorate([
     (0, type_graphql_1.Field)((type) => [Number]),
     __metadata("design:type", Array)
 ], Balance.prototype, "day", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], Balance.prototype, "updateDate", void 0);
 Balance = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], Balance);

@@ -3,13 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsertBalance = void 0;
 function InsertBalance(HashId, key, newBalance, lastBalance) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
     mongodb.connect(url, async (erro, banco) => {
         if (erro) {
             throw erro;
         }
-        let financialData = [];
-        const dbo = banco.db("BlackNodeDB");
+        const dbo = banco.db("userInfo");
         let query = { idHash: HashId };
         const dayLimit = 7;
         const weekLimit = 4;
@@ -34,6 +33,11 @@ function InsertBalance(HashId, key, newBalance, lastBalance) {
             }
         }
         function dayProcess() {
+            const date = new Date();
+            const actualYear = date === null || date === void 0 ? void 0 : date.getFullYear();
+            const Month = date.getMonth() + 1;
+            const day = date.getDate();
+            lastBalance.updateDate = `${day}/${Month}/${actualYear}`;
             if (lastBalance.day.length >= dayLimit) {
                 weekProcess();
                 lastBalance.day.shift();
@@ -44,14 +48,13 @@ function InsertBalance(HashId, key, newBalance, lastBalance) {
             }
         }
         dayProcess();
-        console.log(lastBalance);
         let newData = {
             $set: {
                 financialHistory: lastBalance,
             },
         };
         dbo
-            .collection("TotalBalance")
+            .collection("financialData")
             .updateOne(query, newData, async (erro, resultado) => {
             if (erro) {
                 throw erro;

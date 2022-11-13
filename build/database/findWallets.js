@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindWallets = void 0;
 async function FindWallets(HashId, key) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
     let result = [];
     function data() {
         return new Promise((resolve) => {
@@ -11,17 +11,18 @@ async function FindWallets(HashId, key) {
                 if (erro) {
                     throw erro;
                 }
-                const dbo = banco.db("BlackNodeDB");
+                const dbo = banco.db("userInfo");
                 let query = { idHash: HashId };
                 dbo
-                    .collection("node")
+                    .collection("master")
                     .find(query)
                     .toArray(async (erro, resultado) => {
+                    var _a;
                     if (erro) {
                         throw erro;
                     }
                     const res = resultado;
-                    result.push(res[0].carteiras);
+                    result.push((_a = res[0]) === null || _a === void 0 ? void 0 : _a.carteiras);
                     resolve();
                     banco.close();
                 });

@@ -8,4 +8,6 @@ export class Balance {
   week: number[];
   @Field((type) => [Number])
   day: number[];
+  @Field()
+  updateDate: string;
 }

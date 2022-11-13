@@ -23,14 +23,13 @@ const web3_1 = __importDefault(require("web3"));
 const insert_1 = require("../database/insert");
 const findWallets_1 = require("../database/findWallets");
 const bitcore_lib_1 = require("bitcore-lib");
-const web3 = new web3_1.default("https://rinkeby.infura.io/v3/1b8c4e37898645a4854090b9600c6490");
-//const CoinKey = require("coinkey");
-//const wallet = new CoinKey.createRandom();
+const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
+        console.log(HashId, key);
         return await (0, findWallets_1.FindWallets)(HashId, key);
     }
-    createEthWallet(key, name, HashId) {
+    async createEthWallet(key, name, HashId) {
         const wallet = web3.eth.accounts.wallet.create(0);
         const account = web3.eth.accounts.create();
         wallet.add(account.privateKey);
@@ -40,10 +39,11 @@ let WalletResolver = class WalletResolver {
             address: wallet[wallet.length - 1].address,
             privateKey: wallet[wallet.length - 1].privateKey,
         };
-        (0, insert_1.InsertWallet)(newWallet, HashId, key);
+        let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
+        (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
         return newWallet;
     }
-    createBTCWallet(key, name, HashId) {
+    async createBTCWallet(key, name, HashId) {
         const privateKey = new bitcore_lib_1.PrivateKey();
         const address = privateKey.toAddress();
         let newWallet = {
@@ -52,7 +52,8 @@ let WalletResolver = class WalletResolver {
             address: address.toString(),
             privateKey: privateKey.toString(),
         };
-        (0, insert_1.InsertWallet)(newWallet, HashId, key);
+        let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
+        (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
         return newWallet;
     }
     async createTransaction(addressFrom, privateKey, addressTo, value) {
@@ -91,7 +92,7 @@ __decorate([
     __param(2, (0, type_graphql_1.Arg)("HashId")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", Wallet_1.Wallet)
+    __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createEthWallet", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Wallet_1.Wallet),
@@ -100,7 +101,7 @@ __decorate([
     __param(2, (0, type_graphql_1.Arg)("HashId")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", Wallet_1.Wallet)
+    __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createBTCWallet", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),

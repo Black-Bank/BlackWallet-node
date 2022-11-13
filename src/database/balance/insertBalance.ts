@@ -7,16 +7,14 @@ export function InsertBalance(
   lastBalance: Balance
 ) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://${key}@cluster0.im4zqou.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
 
   mongodb.connect(url, async (erro: { message: string }, banco: any) => {
     if (erro) {
       throw erro;
     }
-    let financialData: any[] = [];
-    const dbo = banco.db("BlackNodeDB");
+    const dbo = banco.db("userInfo");
     let query = { idHash: HashId };
-
     const dayLimit = 7;
     const weekLimit = 4;
     const monthLimit = 6;
@@ -41,6 +39,11 @@ export function InsertBalance(
     }
 
     function dayProcess() {
+      const date = new Date();
+      const actualYear = date?.getFullYear();
+      const Month = date.getMonth() + 1;
+      const day = date.getDate();
+      lastBalance.updateDate = `${day}/${Month}/${actualYear}`;
       if (lastBalance.day.length >= dayLimit) {
         weekProcess();
         lastBalance.day.shift();
@@ -52,15 +55,13 @@ export function InsertBalance(
 
     dayProcess();
 
-    console.log(lastBalance);
-
     let newData = {
       $set: {
         financialHistory: lastBalance,
       },
     };
     dbo
-      .collection("TotalBalance")
+      .collection("financialData")
       .updateOne(query, newData, async (erro, resultado) => {
         if (erro) {
           throw erro;
