@@ -10,4 +10,10 @@ export class Wallet {
   address: string;
   @Field()
   privateKey: string;
+  @Field()
+  balance: number;
+  @Field()
+  coinPrice: number;
+  @Field()
+  totalBalance: number;
 }
