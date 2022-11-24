@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsertBalance = void 0;
 function InsertBalance(HashId, key, newBalance, lastBalance) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     mongodb.connect(url, async (erro, banco) => {
         if (erro) {
             throw erro;

@@ -1,12 +1,11 @@
 export async function FindBalance(HashId: string, key: string) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
 
   let result = [];
   function data() {
     return new Promise<void>((resolve) => {
       mongodb.connect(url, (erro: { message: string }, banco: any) => {
-        console.log(key);
         if (erro) {
           throw erro;
         }
@@ -21,6 +20,7 @@ export async function FindBalance(HashId: string, key: string) {
               throw erro;
             }
             const res = resultado;
+
             result.push(res[0]);
             resolve();
             banco.close();
@@ -31,7 +31,7 @@ export async function FindBalance(HashId: string, key: string) {
 
   async function ReturnData() {
     await data();
-    console.log(result[0].financialHistory);
+    console.log(result);
     return result[0].financialHistory;
   }
   return await ReturnData();

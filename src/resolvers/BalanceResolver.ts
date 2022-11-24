@@ -4,7 +4,8 @@ import { InsertBalance } from "../database/balance/insertBalance";
 import { RemoveBalance } from "../database/balance/removeBalance";
 import { Balance } from "../entities/balance";
 import axios from "axios";
-import { Console } from "console";
+import { FormatedData } from "../database/balance/formatedData";
+import { Wallet } from "../entities/Wallet";
 
 @Resolver()
 export class BalanceResolver {
@@ -14,6 +15,13 @@ export class BalanceResolver {
     @Arg("HashId") HashId: string
   ): Promise<Balance> {
     return await FindBalance(HashId, key);
+  }
+  @Query(() => [Wallet])
+  async getFormatedData(
+    @Arg("key") key: string,
+    @Arg("HashId") HashId: string
+  ): Promise<Array<Wallet>> {
+    return await FormatedData(HashId, key);
   }
   @Query(() => Number)
   async getPrice(

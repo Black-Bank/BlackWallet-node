@@ -3,12 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindBalance = void 0;
 async function FindBalance(HashId, key) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://${key}@cluster0.aqzkkfe.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     let result = [];
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
-                console.log(key);
                 if (erro) {
                     throw erro;
                 }
@@ -31,7 +30,7 @@ async function FindBalance(HashId, key) {
     }
     async function ReturnData() {
         await data();
-        console.log(result[0].financialHistory);
+        console.log(result);
         return result[0].financialHistory;
     }
     return await ReturnData();

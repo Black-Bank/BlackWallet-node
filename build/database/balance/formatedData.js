@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FindWallets = void 0;
-async function FindWallets(HashId, key) {
+exports.FormatedData = void 0;
+async function FormatedData(HashId, key) {
     const mongodb = require("mongodb").MongoClient;
     const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     let result = [];
@@ -19,6 +19,7 @@ async function FindWallets(HashId, key) {
                     .toArray(async (erro, resultado) => {
                     var _a;
                     if (erro) {
+                        console.log("err", erro);
                         throw erro;
                     }
                     const res = resultado;
@@ -35,4 +36,4 @@ async function FindWallets(HashId, key) {
     }
     return await ReturnData();
 }
-exports.FindWallets = FindWallets;
+exports.FormatedData = FormatedData;
