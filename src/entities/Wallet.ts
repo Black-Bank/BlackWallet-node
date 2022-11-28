@@ -11,9 +11,9 @@ export class Wallet {
   @Field()
   privateKey: string;
   @Field()
-  balance: number;
+  balance?: number;
   @Field()
-  coinPrice: number;
+  coinPrice?: number;
   @Field()
-  totalBalance: number;
+  totalBalance?: number;
 }
