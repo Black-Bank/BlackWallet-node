@@ -5,7 +5,6 @@ import { InsertWallet } from "../database/insert";
 import { FindWallets } from "../database/findWallets";
 import { PrivateKey } from "bitcore-lib";
 import { DeleteWallets } from "../Domain/DeleteWallet";
-import { address } from "bitcoinjs-lib";
 
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
