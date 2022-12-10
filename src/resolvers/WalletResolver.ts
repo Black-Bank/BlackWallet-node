@@ -1,10 +1,11 @@
 import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
-import { walletData } from "../database/wallet";
 import { Wallet } from "../entities/Wallet";
 import Web3 from "web3";
 import { InsertWallet } from "../database/insert";
 import { FindWallets } from "../database/findWallets";
 import { PrivateKey } from "bitcore-lib";
+import { DeleteWallets } from "../Domain/DeleteWallet";
+import { address } from "bitcoinjs-lib";
 
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
@@ -20,12 +21,12 @@ export class WalletResolver {
     return await FindWallets(HashId, key);
   }
 
-  @Mutation(() => Wallet)
+  @Mutation(() => Boolean)
   async createEthWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
     @Arg("HashId") HashId: string
-  ): Promise<Wallet> {
+  ): Promise<boolean> {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
     wallet.add(account.privateKey);
@@ -36,16 +37,16 @@ export class WalletResolver {
       privateKey: wallet[wallet.length - 1].privateKey,
     };
     let lastWallet = await FindWallets(HashId, key);
-    InsertWallet(newWallet, HashId, key, lastWallet);
-    return newWallet;
+    return await InsertWallet(newWallet, HashId, key, lastWallet);
   }
 
-  @Mutation(() => Wallet)
+  @Mutation(() => Boolean)
   async createBTCWallet(
     @Arg("key") key: string,
     @Arg("name") name: string,
     @Arg("HashId") HashId: string
-  ): Promise<Wallet> {
+  ): Promise<Boolean> {
+    console.log("init");
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
 
@@ -56,8 +57,7 @@ export class WalletResolver {
       privateKey: privateKey.toString(),
     };
     let lastWallet = await FindWallets(HashId, key);
-    InsertWallet(newWallet, HashId, key, lastWallet);
-    return newWallet;
+    return await InsertWallet(newWallet, HashId, key, lastWallet);
   }
   @Mutation(() => String)
   async createTransaction(
@@ -86,13 +86,11 @@ export class WalletResolver {
   }
 
   @Mutation(() => Boolean)
-  deleteWallet(@Arg("name") name: string): boolean {
-    let walletIndex = walletData.findIndex((wallet) => wallet.name === name);
-
-    if (walletIndex > -1) {
-      walletData.splice(walletIndex, 1);
-      return true;
-    }
-    return false;
+  async deleteWallet(
+    @Arg("HashId") HashId: string,
+    @Arg("key") key: string,
+    @Arg("address") address: string
+  ): Promise<Boolean> {
+    return await DeleteWallets(HashId, key, address);
   }
 }
