@@ -51,10 +51,11 @@ async function FormatedData(HashId, key, mainNet, API_KEY) {
                 wallet.coinPrice = coinPriceActual;
             }
             else if (wallet.WalletType === "ETH") {
+                const convertFactor = 1000000000000000000;
                 const source_address = wallet.address;
                 let newBalance = await web3.eth.getBalance(source_address);
                 const coinPriceActual = await (0, getCoinPrice_1.CoinPrice)(API_KEY, "ETH");
-                wallet.balance = Number(newBalance);
+                wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
                 wallet.coinPrice = coinPriceActual;
             }
         }

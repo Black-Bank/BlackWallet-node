@@ -42,7 +42,6 @@ let WalletResolver = class WalletResolver {
         return await (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
     }
     async createBTCWallet(key, name, HashId) {
-        console.log("init");
         const privateKey = new bitcore_lib_1.PrivateKey();
         const address = privateKey.toAddress();
         let newWallet = {
@@ -59,9 +58,9 @@ let WalletResolver = class WalletResolver {
             from: addressFrom,
             to: addressTo,
             value: web3.utils.toWei(String(value), "ether"),
-            chain: "rinkeby",
+            chain: "mainnet",
             hardfork: "London",
-            gas: "210000",
+            gas: "22000",
         }, privateKey);
         const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
         return createReceipt.transactionHash;

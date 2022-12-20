@@ -9,7 +9,6 @@ import { DeleteWallets } from "../Domain/DeleteWallet";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
-
 @Resolver()
 export class WalletResolver {
   @Query(() => [Wallet])
@@ -45,7 +44,6 @@ export class WalletResolver {
     @Arg("name") name: string,
     @Arg("HashId") HashId: string
   ): Promise<Boolean> {
-    console.log("init");
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
 
@@ -70,9 +68,9 @@ export class WalletResolver {
         from: addressFrom,
         to: addressTo,
         value: web3.utils.toWei(String(value), "ether"),
-        chain: "rinkeby",
+        chain: "mainnet",
         hardfork: "London",
-        gas: "210000",
+        gas: "22000",
       },
       privateKey
     );
