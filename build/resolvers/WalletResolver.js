@@ -23,6 +23,8 @@ const insert_1 = require("../database/insert");
 const findWallets_1 = require("../database/findWallets");
 const bitcore_lib_1 = require("bitcore-lib");
 const DeleteWallet_1 = require("../Domain/DeleteWallet");
+const axios_1 = __importDefault(require("axios"));
+const bitcore = require("bitcore-lib");
 const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
@@ -53,17 +55,58 @@ let WalletResolver = class WalletResolver {
         let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
         return await (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
     }
-    async createTransaction(addressFrom, privateKey, addressTo, value) {
-        const tx = await web3.eth.accounts.signTransaction({
-            from: addressFrom,
-            to: addressTo,
-            value: web3.utils.toWei(String(value), "ether"),
-            chain: "mainnet",
-            hardfork: "London",
-            gas: "22000",
-        }, privateKey);
-        const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
-        return createReceipt.transactionHash;
+    async createTransaction(coin, addressFrom, privateKey, addressTo, value) {
+        if (coin === "ETH") {
+            const gasPrice = "21000";
+            const tx = await web3.eth.accounts.signTransaction({
+                from: addressFrom,
+                to: addressTo,
+                value: web3.utils.toWei(String(value), "ether"),
+                chain: "mainnet",
+                hardfork: "London",
+                gas: gasPrice,
+            }, privateKey);
+            const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
+            return createReceipt.transactionHash;
+        }
+        if (coin === "BTC") {
+            const sochain_network = "BTC";
+            const satoshiToSend = value * 100000000;
+            let fee = 5430;
+            let inputCount = 0;
+            let utxosData = await axios_1.default.get(`https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${addressFrom}`);
+            let transaction = new bitcore.Transaction().fee(5430);
+            let totalAmountAvailable = 0;
+            let inputs = [];
+            let utxos = utxosData === null || utxosData === void 0 ? void 0 : utxosData.data.data.txs;
+            for (const element of utxos) {
+                let utxo = {};
+                utxo.satoshis = Math.floor(Number(element.value) * 100000000);
+                utxo.script = element.script_hex;
+                utxo.address = addressFrom;
+                utxo.txId = element.txid;
+                utxo.outputIndex = element.output_no;
+                totalAmountAvailable += utxo.satoshis;
+                inputCount += 1;
+                inputs.push(utxo);
+            }
+            if (totalAmountAvailable - satoshiToSend - fee < 0) {
+                throw new Error("Balance is too low for this transaction");
+            }
+            transaction.from(inputs);
+            transaction.to(addressTo, satoshiToSend);
+            transaction.change(addressFrom);
+            transaction.sign(privateKey);
+            const serializedTX = transaction.serialize();
+            const result = await (0, axios_1.default)({
+                method: "POST",
+                url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
+                data: {
+                    tx_hex: serializedTX,
+                },
+            });
+            return result.data.data.txid;
+        }
     }
     async deleteWallet(HashId, key, address) {
         return await (0, DeleteWallet_1.DeleteWallets)(HashId, key, address);
@@ -97,12 +140,13 @@ __decorate([
 ], WalletResolver.prototype, "createBTCWallet", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),
-    __param(0, (0, type_graphql_1.Arg)("addressFrom")),
-    __param(1, (0, type_graphql_1.Arg)("privateKey")),
-    __param(2, (0, type_graphql_1.Arg)("addressTo")),
-    __param(3, (0, type_graphql_1.Arg)("value")),
+    __param(0, (0, type_graphql_1.Arg)("coin")),
+    __param(1, (0, type_graphql_1.Arg)("addressFrom")),
+    __param(2, (0, type_graphql_1.Arg)("privateKey")),
+    __param(3, (0, type_graphql_1.Arg)("addressTo")),
+    __param(4, (0, type_graphql_1.Arg)("value")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Number]),
+    __metadata("design:paramtypes", [String, String, String, String, Number]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createTransaction", null);
 __decorate([
