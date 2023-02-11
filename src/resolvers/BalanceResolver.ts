@@ -16,14 +16,18 @@ export class BalanceResolver {
   ): Promise<Balance> {
     return await FindBalance(HashId, key);
   }
+
+  @Query(() => String)
+  getString(): string {
+    return "ola";
+  }
   @Query(() => [Wallet])
   async getFormatedData(
     @Arg("key") key: string,
     @Arg("HashId") HashId: string,
-    @Arg("mainNet") mainNet: string,
-    @Arg("API_KEY") API_KEY: string
+    @Arg("mainNet") mainNet: string
   ): Promise<Array<Wallet>> {
-    return await FormatedData(HashId, key, mainNet, API_KEY);
+    return await FormatedData(HashId, key, mainNet);
   }
 
   @Mutation(() => Boolean)

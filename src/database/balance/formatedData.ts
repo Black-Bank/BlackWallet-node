@@ -5,12 +5,11 @@ import { CoinPrice } from "../../Domain/getCoinPrice";
 export async function FormatedData(
   HashId: string,
   key: string,
-  mainNet: string,
-  API_KEY
+  mainNet: string
 ) {
   const mongodb = require("mongodb").MongoClient;
   const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
-  const sochain_network = "BTC";
+
   const web3 = new Web3(mainNet);
 
   let result = [];
@@ -47,17 +46,21 @@ export async function FormatedData(
     for (let i = 0; i < result[0].length; i++) {
       const wallet = result[0][i];
       if (wallet.WalletType === "BTC") {
+        const convertFactor = 100000000;
         const source_address = wallet.address;
-        const sochain_url = `https://sochain.com/api/v2/get_address_balance/${sochain_network}/${source_address}`;
-        const response = await axios.get(sochain_url);
-        const coinPriceActual = await CoinPrice(API_KEY, "BTC");
-        wallet.balance = Number(response?.data.data.confirmed_balance);
+        const newBalance = await axios.get(
+          `https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`
+        );
+        const coinPriceActual = await CoinPrice("BTC");
+        wallet.balance = Number(
+          newBalance?.data.balance / convertFactor
+        ).toFixed(10);
         wallet.coinPrice = coinPriceActual;
       } else if (wallet.WalletType === "ETH") {
         const convertFactor = 1000000000000000000;
         const source_address = wallet.address;
         let newBalance = await web3.eth.getBalance(source_address);
-        const coinPriceActual = await CoinPrice(API_KEY, "ETH");
+        const coinPriceActual = await CoinPrice("ETH");
         wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
         wallet.coinPrice = coinPriceActual;
       }

@@ -24,8 +24,11 @@ let BalanceResolver = class BalanceResolver {
     async getBalance(key, HashId) {
         return await (0, findBalance_1.FindBalance)(HashId, key);
     }
-    async getFormatedData(key, HashId, mainNet, API_KEY) {
-        return await (0, formatedData_1.FormatedData)(HashId, key, mainNet, API_KEY);
+    getString() {
+        return "ola";
+    }
+    async getFormatedData(key, HashId, mainNet) {
+        return await (0, formatedData_1.FormatedData)(HashId, key, mainNet);
     }
     RemoveBalance(key, HashId, removeOption) {
         (0, removeBalance_1.RemoveBalance)(HashId, key, removeOption);
@@ -46,13 +49,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getBalance", null);
 __decorate([
+    (0, type_graphql_1.Query)(() => String),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], BalanceResolver.prototype, "getString", null);
+__decorate([
     (0, type_graphql_1.Query)(() => [Wallet_1.Wallet]),
     __param(0, (0, type_graphql_1.Arg)("key")),
     __param(1, (0, type_graphql_1.Arg)("HashId")),
     __param(2, (0, type_graphql_1.Arg)("mainNet")),
-    __param(3, (0, type_graphql_1.Arg)("API_KEY")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getFormatedData", null);
 __decorate([
