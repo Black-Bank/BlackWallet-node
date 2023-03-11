@@ -17,3 +17,9 @@ export class Wallet {
   @Field()
   totalBalance?: number;
 }
+
+@ObjectType()
+export class ICoinPrice {
+  @Field()
+  value: number;
+}
