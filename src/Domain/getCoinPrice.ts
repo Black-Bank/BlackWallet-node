@@ -8,6 +8,7 @@ export async function CoinPrice(coin: string) {
 
     return coinPrice;
   } catch (err) {
+    console.log("err ", err.message);
     throw new Error(err.message);
   }
 }
