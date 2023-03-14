@@ -3,7 +3,7 @@ import { FindBalance } from "../database/balance/findBalance";
 import { InsertBalance } from "../database/balance/insertBalance";
 import { RemoveBalance } from "../database/balance/removeBalance";
 import { Balance } from "../entities/balance";
-import axios from "axios";
+
 import { FormatedData } from "../database/balance/formatedData";
 import { Wallet } from "../entities/Wallet";
 
@@ -17,10 +17,6 @@ export class BalanceResolver {
     return await FindBalance(HashId, key);
   }
 
-  @Query(() => String)
-  getString(): string {
-    return "ola";
-  }
   @Query(() => [Wallet])
   async getFormatedData(
     @Arg("key") key: string,
