@@ -6,6 +6,7 @@ import { Balance } from "../entities/balance";
 
 import { FormatedData } from "../database/balance/formatedData";
 import { Wallet } from "../entities/Wallet";
+import { CoinPrice } from "../Domain/getCoinPrice";
 
 @Resolver()
 export class BalanceResolver {
@@ -15,6 +16,11 @@ export class BalanceResolver {
     @Arg("HashId") HashId: string
   ): Promise<Balance> {
     return await FindBalance(HashId, key);
+  }
+
+  @Query(() => Number)
+  async CoinPrice(@Arg("coin") coin: string): Promise<number> {
+    return await CoinPrice(coin);
   }
 
   @Query(() => [Wallet])

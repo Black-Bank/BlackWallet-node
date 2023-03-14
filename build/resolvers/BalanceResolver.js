@@ -20,9 +20,13 @@ const removeBalance_1 = require("../database/balance/removeBalance");
 const balance_1 = require("../entities/balance");
 const formatedData_1 = require("../database/balance/formatedData");
 const Wallet_1 = require("../entities/Wallet");
+const getCoinPrice_1 = require("../Domain/getCoinPrice");
 let BalanceResolver = class BalanceResolver {
     async getBalance(key, HashId) {
         return await (0, findBalance_1.FindBalance)(HashId, key);
+    }
+    async CoinPrice(coin) {
+        return await (0, getCoinPrice_1.CoinPrice)(coin);
     }
     async getFormatedData(key, HashId, mainNet) {
         return await (0, formatedData_1.FormatedData)(HashId, key, mainNet);
@@ -45,6 +49,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getBalance", null);
+__decorate([
+    (0, type_graphql_1.Query)(() => Number),
+    __param(0, (0, type_graphql_1.Arg)("coin")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BalanceResolver.prototype, "CoinPrice", null);
 __decorate([
     (0, type_graphql_1.Query)(() => [Wallet_1.Wallet]),
     __param(0, (0, type_graphql_1.Arg)("key")),

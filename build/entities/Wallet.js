@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Wallet = void 0;
+exports.ICoinPrice = exports.Wallet = void 0;
 const type_graphql_1 = require("type-graphql");
 let Wallet = class Wallet {
 };
@@ -45,3 +45,13 @@ Wallet = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], Wallet);
 exports.Wallet = Wallet;
+let ICoinPrice = class ICoinPrice {
+};
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", Number)
+], ICoinPrice.prototype, "value", void 0);
+ICoinPrice = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], ICoinPrice);
+exports.ICoinPrice = ICoinPrice;

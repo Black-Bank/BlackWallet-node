@@ -13,6 +13,7 @@ async function CoinPrice(coin) {
         return coinPrice;
     }
     catch (err) {
+        console.log("err ", err.message);
         throw new Error(err.message);
     }
 }
