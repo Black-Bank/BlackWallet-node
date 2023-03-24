@@ -6,9 +6,7 @@ import { FindWallets } from "../database/findWallets";
 import { PrivateKey } from "bitcore-lib";
 import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
-import { Console } from "console";
-
-const bitcore = require("bitcore-lib");
+import * as bitcore from "bitcore-lib";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
@@ -87,50 +85,74 @@ export class WalletResolver {
       return createReceipt.transactionHash;
     }
     if (coin === "BTC") {
-      const sochain_network = "BTC";
+      const network = bitcore.Networks.mainnet;
 
-      const satoshiToSend = value * 100000000;
-      let fee = 5430;
-      let inputCount = 0;
-      let utxosData = await axios.get(
-        `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${addressFrom}`
+      // Get UTXOs of the sender address
+      const utxosResponse = await axios.get(
+        `https://api.bitcore.io/api/BTC/mainnet/address/${addressFrom}/utxos`
       );
-      let transaction = new bitcore.Transaction().fee(5430);
-
-      let totalAmountAvailable = 0;
-
-      let inputs = [];
-      let utxos = utxosData?.data.data.txs;
-      for (const element of utxos) {
-        let utxo: IUtxo = {};
-        utxo.satoshis = Math.floor(Number(element.value) * 100000000);
-        utxo.script = element.script_hex;
-        utxo.address = addressFrom;
-        utxo.txId = element.txid;
-        utxo.outputIndex = element.output_no;
-        totalAmountAvailable += utxo.satoshis;
-        inputCount += 1;
-        inputs.push(utxo);
+      const utxos = utxosResponse.data;
+      if (!utxos || utxos.length === 0) {
+        throw new Error("No UTXOs found for the sender address.");
       }
 
-      if (totalAmountAvailable - satoshiToSend - fee < 0) {
-        throw new Error("Balance is too low for this transaction");
-      }
+      // Create a transaction builder
+      const transactionBuilder = new bitcore.TransactionBuilder(network);
 
-      transaction.from(inputs);
-      transaction.to(addressTo, satoshiToSend);
-
-      transaction.change(addressFrom);
-      transaction.sign(privateKey);
-      const serializedTX = transaction.serialize();
-      const result = await axios({
-        method: "POST",
-        url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
-        data: {
-          tx_hex: serializedTX,
-        },
+      // Add inputs to the transaction builder
+      let inputAmount = 0;
+      utxos.forEach((utxo: any) => {
+        transactionBuilder.addInput(utxo.txid, utxo.outputIndex);
+        inputAmount += utxo.satoshis;
       });
-      return result.data.data.txid;
+
+      // Calculate output amount and add recipient output
+      const feePerByte = 1;
+      const outputAmount =
+        value +
+        feePerByte * transactionBuilder.buildIncomplete().toBuffer().length;
+      transactionBuilder.addOutput(
+        new bitcore.Address(addressTo),
+        outputAmount
+      );
+
+      // Calculate change amount and add change output
+      const changeAmount = inputAmount - outputAmount;
+      if (changeAmount < 0) {
+        throw new Error("Insufficient funds to cover transaction.");
+      }
+      if (changeAmount > 0) {
+        transactionBuilder.addOutput(
+          new bitcore.Address(addressFrom),
+          changeAmount
+        );
+      }
+
+      // Sign inputs with sender private key
+      utxos.forEach((utxo: any, index: number) => {
+        const privateKey = new bitcore.PrivateKey(PrivateKey);
+        transactionBuilder.sign(
+          index,
+          privateKey,
+          undefined,
+          bitcore.Transaction.SIGHASH_ALL,
+          utxo.satoshis
+        );
+      });
+
+      // Build and broadcast the transaction
+      const transaction = transactionBuilder.build();
+      const transactionHex = transaction.toBuffer().toString("hex");
+      const broadcastResponse = await axios.post(
+        `https://api.bitcore.io/api/BTC/mainnet/tx/send`,
+        { rawTx: transactionHex }
+      );
+      const broadcastResult = broadcastResponse.data;
+      if (!broadcastResult || !broadcastResult.txid) {
+        throw new Error("Transaction broadcast failed.");
+      }
+
+      return broadcastResult.txid;
     }
   }
 
