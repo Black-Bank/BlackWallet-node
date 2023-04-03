@@ -34,6 +34,7 @@ export class AuthResolver {
       throw new Error(`Invalid Email`);
     }
   }
+
   @Mutation(() => Boolean)
   async UpdatePass(
     @Arg("key") key: string,
