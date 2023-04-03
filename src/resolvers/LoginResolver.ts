@@ -7,12 +7,10 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   async UpdatePass(
     @Arg("key") key: string,
-
     @Arg("HashId") HashId: string,
-    @Arg("passCripto") passCripto: string,
     @Arg("passWord") passWord: string
   ): Promise<boolean> {
-    const hashedPassword = Cypher(passWord, passCripto);
+    const hashedPassword = Cypher(passWord);
 
     return await InsertCypher(HashId, key, hashedPassword);
   }
