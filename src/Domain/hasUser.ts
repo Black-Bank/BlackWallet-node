@@ -1,8 +1,4 @@
-export async function InsertCypher(
-  Email: string,
-  key: string,
-  hashedPassword: string
-) {
+export async function hasUser(Email: string, key: string) {
   const mongodb = require("mongodb").MongoClient;
   const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -13,18 +9,14 @@ export async function InsertCypher(
           throw erro;
         }
         const dbo = banco.db("userInfo");
-        let query = { Email: Email };
-
-        let newPass = { $set: { senha: hashedPassword } };
 
         dbo
           .collection("master")
-          .updateOne(query, newPass, async (erro, resultado) => {
+          .findOne({ Email: Email }, async (erro, resultado) => {
             if (erro) {
               throw erro;
             }
-            resolve(Boolean(resultado.modifiedCount));
-
+            resolve(Boolean(resultado));
             banco.close();
           });
       });

@@ -5,6 +5,6 @@ const bcrypt = require("bcryptjs");
 function Cypher(text) {
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(text, salt);
-    return `${hash}:salt:${salt}`;
+    return `${hash}`;
 }
 exports.Cypher = Cypher;
