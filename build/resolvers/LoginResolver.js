@@ -16,12 +16,32 @@ exports.AuthResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const cypher_1 = require("../Domain/cypher");
 const InsertCypher_1 = require("../Domain/InsertCypher");
+const InsertUser_1 = require("../Domain/InsertUser");
 let AuthResolver = class AuthResolver {
+    async CreateUser(key, Email, passWord) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const hashedPassword = (0, cypher_1.Cypher)(passWord);
+        if (regex.test(Email)) {
+            return await (0, InsertUser_1.InsertUser)(Email, key, hashedPassword);
+        }
+        else {
+            throw new Error(`Invalid email`);
+        }
+    }
     async UpdatePass(key, HashId, passWord) {
         const hashedPassword = (0, cypher_1.Cypher)(passWord);
         return await (0, InsertCypher_1.InsertCypher)(HashId, key, hashedPassword);
     }
 };
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Arg)("key")),
+    __param(1, (0, type_graphql_1.Arg)("Email")),
+    __param(2, (0, type_graphql_1.Arg)("passWord")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AuthResolver.prototype, "CreateUser", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
     __param(0, (0, type_graphql_1.Arg)("key")),
