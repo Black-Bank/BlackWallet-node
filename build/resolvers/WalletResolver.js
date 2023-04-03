@@ -1,9 +1,32 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
@@ -24,7 +47,7 @@ const findWallets_1 = require("../database/findWallets");
 const bitcore_lib_1 = require("bitcore-lib");
 const DeleteWallet_1 = require("../Domain/DeleteWallet");
 const axios_1 = __importDefault(require("axios"));
-const bitcore = require("bitcore-lib");
+const bitcore = __importStar(require("bitcore-lib"));
 const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
@@ -70,42 +93,48 @@ let WalletResolver = class WalletResolver {
             return createReceipt.transactionHash;
         }
         if (coin === "BTC") {
-            const sochain_network = "BTC";
-            const satoshiToSend = value * 100000000;
-            let fee = 5430;
-            let inputCount = 0;
-            let utxosData = await axios_1.default.get(`https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${addressFrom}`);
-            let transaction = new bitcore.Transaction().fee(5430);
-            let totalAmountAvailable = 0;
-            let inputs = [];
-            let utxos = utxosData === null || utxosData === void 0 ? void 0 : utxosData.data.data.txs;
-            for (const element of utxos) {
-                let utxo = {};
-                utxo.satoshis = Math.floor(Number(element.value) * 100000000);
-                utxo.script = element.script_hex;
-                utxo.address = addressFrom;
-                utxo.txId = element.txid;
-                utxo.outputIndex = element.output_no;
-                totalAmountAvailable += utxo.satoshis;
-                inputCount += 1;
-                inputs.push(utxo);
+            const network = bitcore.Networks.mainnet;
+            // Get UTXOs of the sender address
+            const utxosResponse = await axios_1.default.get(`https://api.bitcore.io/api/BTC/mainnet/address/${addressFrom}/utxos`);
+            const utxos = utxosResponse.data;
+            if (!utxos || utxos.length === 0) {
+                throw new Error("No UTXOs found for the sender address.");
             }
-            if (totalAmountAvailable - satoshiToSend - fee < 0) {
-                throw new Error("Balance is too low for this transaction");
-            }
-            transaction.from(inputs);
-            transaction.to(addressTo, satoshiToSend);
-            transaction.change(addressFrom);
-            transaction.sign(privateKey);
-            const serializedTX = transaction.serialize();
-            const result = await (0, axios_1.default)({
-                method: "POST",
-                url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
-                data: {
-                    tx_hex: serializedTX,
-                },
+            // Create a transaction builder
+            const transactionBuilder = new bitcore.TransactionBuilder(network);
+            // Add inputs to the transaction builder
+            let inputAmount = 0;
+            utxos.forEach((utxo) => {
+                transactionBuilder.addInput(utxo.txid, utxo.outputIndex);
+                inputAmount += utxo.satoshis;
             });
-            return result.data.data.txid;
+            // Calculate output amount and add recipient output
+            const feePerByte = 1;
+            const outputAmount = value +
+                feePerByte * transactionBuilder.buildIncomplete().toBuffer().length;
+            transactionBuilder.addOutput(new bitcore.Address(addressTo), outputAmount);
+            // Calculate change amount and add change output
+            const changeAmount = inputAmount - outputAmount;
+            if (changeAmount < 0) {
+                throw new Error("Insufficient funds to cover transaction.");
+            }
+            if (changeAmount > 0) {
+                transactionBuilder.addOutput(new bitcore.Address(addressFrom), changeAmount);
+            }
+            // Sign inputs with sender private key
+            utxos.forEach((utxo, index) => {
+                const privateKey = new bitcore.PrivateKey(bitcore_lib_1.PrivateKey);
+                transactionBuilder.sign(index, privateKey, undefined, bitcore.Transaction.SIGHASH_ALL, utxo.satoshis);
+            });
+            // Build and broadcast the transaction
+            const transaction = transactionBuilder.build();
+            const transactionHex = transaction.toBuffer().toString("hex");
+            const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: transactionHex });
+            const broadcastResult = broadcastResponse.data;
+            if (!broadcastResult || !broadcastResult.txid) {
+                throw new Error("Transaction broadcast failed.");
+            }
+            return broadcastResult.txid;
         }
     }
     async deleteWallet(HashId, key, address) {
