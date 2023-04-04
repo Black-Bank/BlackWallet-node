@@ -93,43 +93,47 @@ let WalletResolver = class WalletResolver {
             return createReceipt.transactionHash;
         }
         if (coin === "BTC") {
-            const network = bitcore.Networks.mainnet;
             // Get UTXOs of the sender address
-            const utxosResponse = await axios_1.default.get(`https://api.bitcore.io/api/BTC/mainnet/address/${addressFrom}/utxos`);
-            const utxos = utxosResponse.data;
+            const utxosResponse = await axios_1.default.get(`https://blockchain.info/unspent?active=${addressFrom}`);
+            const utxos = utxosResponse.data.unspent_outputs;
             if (!utxos || utxos.length === 0) {
                 throw new Error("No UTXOs found for the sender address.");
             }
+            // Convert UTXOs to bitcore format
+            const bitcoreUtxos = utxos.map((utxo) => new bitcore.Transaction.UnspentOutput({
+                txid: utxo.tx_hash_big_endian,
+                vout: utxo.tx_output_n,
+                scriptPubKey: new bitcore.Script(utxo.script),
+                satoshis: utxo.value,
+            }));
             // Create a transaction builder
-            const transactionBuilder = new bitcore.TransactionBuilder(network);
+            const txb = new bitcore.Transaction();
             // Add inputs to the transaction builder
             let inputAmount = 0;
-            utxos.forEach((utxo) => {
-                transactionBuilder.addInput(utxo.txid, utxo.outputIndex);
+            bitcoreUtxos.forEach((utxo) => {
+                txb.from(utxo);
                 inputAmount += utxo.satoshis;
             });
             // Calculate output amount and add recipient output
             const feePerByte = 1;
-            const outputAmount = value +
-                feePerByte * transactionBuilder.buildIncomplete().toBuffer().length;
-            transactionBuilder.addOutput(new bitcore.Address(addressTo), outputAmount);
+            const outputAmount = value + feePerByte * txb.toBuffer().length;
+            txb.to(addressTo, outputAmount);
             // Calculate change amount and add change output
             const changeAmount = inputAmount - outputAmount;
             if (changeAmount < 0) {
                 throw new Error("Insufficient funds to cover transaction.");
             }
             if (changeAmount > 0) {
-                transactionBuilder.addOutput(new bitcore.Address(addressFrom), changeAmount);
+                txb.change(addressFrom);
             }
             // Sign inputs with sender private key
-            utxos.forEach((utxo, index) => {
-                const privateKey = new bitcore.PrivateKey(bitcore_lib_1.PrivateKey);
-                transactionBuilder.sign(index, privateKey, undefined, bitcore.Transaction.SIGHASH_ALL, utxo.satoshis);
+            bitcoreUtxos.forEach((utxo, index) => {
+                const PrivateKey = new bitcore.PrivateKey(privateKey);
+                txb.sign(PrivateKey, index);
             });
             // Build and broadcast the transaction
-            const transaction = transactionBuilder.build();
-            const transactionHex = transaction.toBuffer().toString("hex");
-            const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: transactionHex });
+            const txHex = txb.serialize();
+            const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: txHex });
             const broadcastResult = broadcastResponse.data;
             if (!broadcastResult || !broadcastResult.txid) {
                 throw new Error("Transaction broadcast failed.");
