@@ -104,10 +104,14 @@ export class WalletResolver {
             satoshis: utxo.value,
           })
       );
+      let fee = 5430;
 
       // Create a transaction builder
       const txb = new bitcore.Transaction();
-
+      if (value < 5430) {
+        // change fee value on conditional
+        fee = txb.toBuffer().length;
+      }
       // Add inputs to the transaction builder
       let inputAmount = 0;
       bitcoreUtxos.forEach((utxo) => {
@@ -116,12 +120,12 @@ export class WalletResolver {
       });
 
       // Calculate output amount and add recipient output
-      const feePerByte = 1;
-      const outputAmount = value + feePerByte * txb.toBuffer().length;
-      txb.to(addressTo, outputAmount);
+
+      const outputAmount = value;
+      txb.fee(fee).to(addressTo, outputAmount);
 
       // Calculate change amount and add change output
-      const changeAmount = inputAmount - outputAmount;
+      const changeAmount = inputAmount - outputAmount - fee;
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
