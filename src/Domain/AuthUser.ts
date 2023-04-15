@@ -26,6 +26,7 @@ export async function AuthUser(Email: string, key: string, password: string) {
             if (erro) {
               throw erro;
             }
+
             bcrypt.compare(
               passwordAuth,
               resultado.senha,

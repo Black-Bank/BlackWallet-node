@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthResolver = void 0;
 const type_graphql_1 = require("type-graphql");
@@ -18,8 +21,17 @@ const InsertCypher_1 = require("../Domain/InsertCypher");
 const InsertUser_1 = require("../Domain/InsertUser");
 const AuthUser_1 = require("../Domain/AuthUser");
 const hasUser_1 = require("../Domain/hasUser");
+const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
 let AuthResolver = class AuthResolver {
-    async VerifyUser(key, Email, passWord) {
+    async VerifyUser(token) {
+        const encryptionKey = "3c29228b1692a2ae8f0$1b747c3dbf3f";
+        const iv = "9c9b7638e492ba2b5f8c8825f5b97100";
+        const crypto = new ComunicationSystemAuth_1.default(encryptionKey, encryptionKey, iv);
+        const decryptedToken = crypto.decrypt(token);
+        const tokenJson = JSON.parse(decryptedToken);
+        const Email = tokenJson.email;
+        const key = tokenJson.key;
+        const passWord = tokenJson.passWord;
         return (0, AuthUser_1.AuthUser)(Email, key, passWord);
     }
     async CreateUser(key, Email, passWord) {
@@ -41,11 +53,9 @@ let AuthResolver = class AuthResolver {
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("Email")),
-    __param(2, (0, type_graphql_1.Arg)("passWord")),
+    __param(0, (0, type_graphql_1.Arg)("token")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "VerifyUser", null);
 __decorate([
