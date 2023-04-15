@@ -1,8 +1,16 @@
 const bcrypt = require("bcryptjs");
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
+require("dotenv").config({ path: dotenvPath });
 
 export async function AuthUser(Email: string, key: string, password: string) {
   const mongodb = require("mongodb").MongoClient;
   const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+
+  const passwordAuth = password.substring(
+    0,
+    password.indexOf(process.env.PASSWORD_EARLY)
+  );
 
   function data() {
     return new Promise<boolean>((resolve) => {
@@ -19,11 +27,10 @@ export async function AuthUser(Email: string, key: string, password: string) {
               throw erro;
             }
             bcrypt.compare(
-              password,
+              passwordAuth,
               resultado.senha,
               function (err, AuthResponse) {
                 if (err) throw err;
-
                 resolve(Boolean(AuthResponse));
               }
             );

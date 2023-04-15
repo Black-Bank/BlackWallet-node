@@ -2,9 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthUser = void 0;
 const bcrypt = require("bcryptjs");
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
+require("dotenv").config({ path: dotenvPath });
 async function AuthUser(Email, key, password) {
     const mongodb = require("mongodb").MongoClient;
     const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
@@ -18,7 +22,7 @@ async function AuthUser(Email, key, password) {
                     if (erro) {
                         throw erro;
                     }
-                    bcrypt.compare(password, resultado.senha, function (err, AuthResponse) {
+                    bcrypt.compare(passwordAuth, resultado.senha, function (err, AuthResponse) {
                         if (err)
                             throw err;
                         resolve(Boolean(AuthResponse));
