@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthResolver = void 0;
 const type_graphql_1 = require("type-graphql");
-const cypher_1 = require("../Domain/cypher");
 const InsertCypher_1 = require("../Domain/InsertCypher");
 const InsertUser_1 = require("../Domain/InsertUser");
 const AuthUser_1 = require("../Domain/AuthUser");
@@ -25,10 +24,9 @@ let AuthResolver = class AuthResolver {
     }
     async CreateUser(key, Email, passWord) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const hashedPassword = (0, cypher_1.Cypher)(passWord);
         const hasThisUser = await (0, hasUser_1.hasUser)(Email, key);
         if (regex.test(Email) && !hasThisUser) {
-            return await (0, InsertUser_1.InsertUser)(Email, key, hashedPassword);
+            return await (0, InsertUser_1.InsertUser)(Email, key, passWord);
         }
         else if (hasThisUser) {
             throw new Error(`Invalid user Email`);
@@ -38,12 +36,11 @@ let AuthResolver = class AuthResolver {
         }
     }
     async UpdatePass(key, Email, passWord) {
-        const hashedPassword = (0, cypher_1.Cypher)(passWord);
-        return await (0, InsertCypher_1.InsertCypher)(Email, key, hashedPassword);
+        return await (0, InsertCypher_1.InsertCypher)(Email, key, passWord);
     }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => Boolean),
+    (0, type_graphql_1.Mutation)(() => Boolean),
     __param(0, (0, type_graphql_1.Arg)("key")),
     __param(1, (0, type_graphql_1.Arg)("Email")),
     __param(2, (0, type_graphql_1.Arg)("passWord")),

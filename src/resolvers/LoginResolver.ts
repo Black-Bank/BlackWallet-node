@@ -7,7 +7,7 @@ import { hasUser } from "../Domain/hasUser";
 
 @Resolver()
 export class AuthResolver {
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   async VerifyUser(
     @Arg("key") key: string,
     @Arg("Email") Email: string,
@@ -23,11 +23,11 @@ export class AuthResolver {
     @Arg("passWord") passWord: string
   ): Promise<boolean> {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const hashedPassword = Cypher(passWord);
+
     const hasThisUser = await hasUser(Email, key);
 
     if (regex.test(Email) && !hasThisUser) {
-      return await InsertUser(Email, key, hashedPassword);
+      return await InsertUser(Email, key, passWord);
     } else if (hasThisUser) {
       throw new Error(`Invalid user Email`);
     } else {
@@ -41,8 +41,6 @@ export class AuthResolver {
     @Arg("Email") Email: string,
     @Arg("passWord") passWord: string
   ): Promise<boolean> {
-    const hashedPassword = Cypher(passWord);
-
-    return await InsertCypher(Email, key, hashedPassword);
+    return await InsertCypher(Email, key, passWord);
   }
 }
