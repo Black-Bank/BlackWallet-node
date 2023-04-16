@@ -24,9 +24,7 @@ const hasUser_1 = require("../Domain/hasUser");
 const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
 let AuthResolver = class AuthResolver {
     async VerifyUser(token) {
-        const encryptionKey = "3c29228b1692a2ae8f0$1b747c3dbf3f";
-        const iv = "9c9b7638e492ba2b5f8c8825f5b97100";
-        const crypto = new ComunicationSystemAuth_1.default(encryptionKey, encryptionKey, iv);
+        const crypto = new ComunicationSystemAuth_1.default();
         const decryptedToken = crypto.decrypt(token);
         const tokenJson = JSON.parse(decryptedToken);
         const Email = tokenJson.email;

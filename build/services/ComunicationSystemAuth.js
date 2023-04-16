@@ -4,21 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto_js_1 = __importDefault(require("crypto-js"));
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
+require("dotenv").config({ path: dotenvPath });
 class Crypto {
-    constructor(encryptionKey, decryptionKey, iv) {
-        this.encryptionKey = encryptionKey;
-        this.decryptionKey = decryptionKey;
-        this.iv = iv;
-    }
     encrypt(plaintext) {
-        const key = crypto_js_1.default.enc.Hex.parse(this.encryptionKey);
-        const iv = crypto_js_1.default.enc.Hex.parse(this.iv);
+        const key = crypto_js_1.default.enc.Hex.parse(process.env.AUTH_PRIVATE_KEY);
+        const iv = crypto_js_1.default.enc.Hex.parse(process.env.IV);
         const ciphertext = crypto_js_1.default.AES.encrypt(plaintext, key, { iv }).toString();
         return ciphertext;
     }
     decrypt(ciphertext) {
-        const key = crypto_js_1.default.enc.Hex.parse(this.decryptionKey);
-        const iv = crypto_js_1.default.enc.Hex.parse(this.iv);
+        const key = crypto_js_1.default.enc.Hex.parse(process.env.AUTH_PRIVATE_KEY);
+        const iv = crypto_js_1.default.enc.Hex.parse(process.env.IV);
         const bytes = crypto_js_1.default.AES.decrypt(ciphertext, key, { iv });
         const plaintext = bytes.toString(crypto_js_1.default.enc.Utf8);
         return plaintext;
