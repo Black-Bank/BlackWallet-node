@@ -30,7 +30,21 @@ let AuthResolver = class AuthResolver {
         const Email = tokenJson.email;
         const key = tokenJson.key;
         const passWord = tokenJson.passWord;
-        return (0, AuthUser_1.AuthUser)(Email, key, passWord);
+        const limitedQueryTime = 10000;
+        const dbPromise = (0, AuthUser_1.AuthUser)(Email, key, passWord);
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const timeoutInfo = false;
+                reject(timeoutInfo);
+            }, limitedQueryTime);
+        });
+        try {
+            const result = await Promise.race([dbPromise, timeoutPromise]);
+            return Boolean(result);
+        }
+        catch (error) {
+            return false;
+        }
     }
     async CreateUser(key, Email, passWord) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

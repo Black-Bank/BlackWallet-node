@@ -4,6 +4,7 @@ import { InsertUser } from "../Domain/InsertUser";
 import { AuthUser } from "../Domain/AuthUser";
 import { hasUser } from "../Domain/hasUser";
 import Crypto from "../services/ComunicationSystemAuth";
+import { TimeoutError, TimeoutInfo } from "rxjs";
 
 @Resolver()
 export class AuthResolver {
@@ -15,8 +16,24 @@ export class AuthResolver {
     const Email = tokenJson.email;
     const key = tokenJson.key;
     const passWord = tokenJson.passWord;
+    const limitedQueryTime = 10000;
 
-    return AuthUser(Email, key, passWord);
+    const dbPromise = AuthUser(Email, key, passWord);
+
+    const timeoutPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const timeoutInfo: boolean = false;
+        reject(timeoutInfo);
+      }, limitedQueryTime);
+    });
+
+    try {
+      const result = await Promise.race([dbPromise, timeoutPromise]);
+
+      return Boolean(result);
+    } catch (error) {
+      return false;
+    }
   }
 
   @Mutation(() => Boolean)
