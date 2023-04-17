@@ -30,8 +30,14 @@ let AuthResolver = class AuthResolver {
         const Email = tokenJson.email;
         const key = tokenJson.key;
         const passWord = tokenJson.passWord;
+        const time = tokenJson.timer;
         const limitedQueryTime = 10000;
         const dbPromise = (0, AuthUser_1.AuthUser)(Email, key, passWord);
+        const objToken = {
+            timer: time + limitedQueryTime,
+            email: Email,
+            isAuthenticated: false,
+        };
         const timeoutPromise = new Promise((resolve, reject) => {
             setTimeout(() => {
                 const timeoutInfo = false;
@@ -40,10 +46,14 @@ let AuthResolver = class AuthResolver {
         });
         try {
             const result = await Promise.race([dbPromise, timeoutPromise]);
-            return Boolean(result);
+            objToken.isAuthenticated = Boolean(result);
+            const objTokenText = JSON.stringify(objToken);
+            return crypto.encrypt(objTokenText);
         }
         catch (error) {
-            return false;
+            objToken.isAuthenticated = false;
+            const objTokenText = JSON.stringify(objToken);
+            return crypto.encrypt(objTokenText);
         }
     }
     async CreateUser(key, Email, passWord) {
@@ -64,7 +74,7 @@ let AuthResolver = class AuthResolver {
     }
 };
 __decorate([
-    (0, type_graphql_1.Mutation)(() => Boolean),
+    (0, type_graphql_1.Mutation)(() => String),
     __param(0, (0, type_graphql_1.Arg)("token")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

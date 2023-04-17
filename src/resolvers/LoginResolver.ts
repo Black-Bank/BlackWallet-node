@@ -8,18 +8,22 @@ import { TimeoutError, TimeoutInfo } from "rxjs";
 
 @Resolver()
 export class AuthResolver {
-  @Mutation(() => Boolean)
-  async VerifyUser(@Arg("token") token: string): Promise<boolean> {
+  @Mutation(() => String)
+  async VerifyUser(@Arg("token") token: string): Promise<string> {
     const crypto = new Crypto();
     const decryptedToken = crypto.decrypt(token);
     const tokenJson = JSON.parse(decryptedToken);
     const Email = tokenJson.email;
     const key = tokenJson.key;
     const passWord = tokenJson.passWord;
+    const time = tokenJson.timer;
     const limitedQueryTime = 10000;
-
     const dbPromise = AuthUser(Email, key, passWord);
-
+    const objToken = {
+      timer: time + limitedQueryTime,
+      email: Email,
+      isAuthenticated: false,
+    };
     const timeoutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         const timeoutInfo: boolean = false;
@@ -29,10 +33,14 @@ export class AuthResolver {
 
     try {
       const result = await Promise.race([dbPromise, timeoutPromise]);
+      objToken.isAuthenticated = Boolean(result);
+      const objTokenText = JSON.stringify(objToken);
 
-      return Boolean(result);
+      return crypto.encrypt(objTokenText);
     } catch (error) {
-      return false;
+      objToken.isAuthenticated = false;
+      const objTokenText = JSON.stringify(objToken);
+      return crypto.encrypt(objTokenText);
     }
   }
 
