@@ -9,6 +9,7 @@ async function AuthUser(Email, password) {
     const mongodb = require("mongodb").MongoClient;
     const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
+    const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
