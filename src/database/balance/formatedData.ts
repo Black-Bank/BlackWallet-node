@@ -52,8 +52,9 @@ export async function FormatedData(
           `https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`
         );
         const coinPriceActual = await CoinPrice("BTC");
+
         wallet.balance = Number(
-          newBalance?.data.balance / convertFactor
+          newBalance?.data.final_balance / convertFactor
         ).toFixed(10);
         wallet.coinPrice = coinPriceActual;
       } else if (wallet.WalletType === "ETH") {
@@ -70,7 +71,6 @@ export async function FormatedData(
       .map((data) => data.balance * data.coinPrice)
       .reduce((total, actual) => total + actual);
     result[0].map((data) => (data.totalBalance = totalBalance));
-
     return result[0];
   }
   return await ReturnData();

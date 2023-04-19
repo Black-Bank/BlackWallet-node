@@ -7,9 +7,11 @@ import { PrivateKey } from "bitcore-lib";
 import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
 import * as bitcore from "bitcore-lib";
+import Crypto from "../services/ComunicationSystemAuth";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
+const crypto = new Crypto();
 @Resolver()
 export class WalletResolver {
   @Query(() => [Wallet])
@@ -47,12 +49,11 @@ export class WalletResolver {
   ): Promise<Boolean> {
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
-
     let newWallet = {
       name: name,
       WalletType: "BTC",
       address: address.toString(),
-      privateKey: privateKey.toString(),
+      privateKey: crypto.encrypt(privateKey.toString()),
     };
     let lastWallet = await FindWallets(HashId, key);
     return await InsertWallet(newWallet, HashId, key, lastWallet);
@@ -76,7 +77,7 @@ export class WalletResolver {
           hardfork: "London",
           gas: gasPrice,
         },
-        privateKey
+        crypto.decrypt(privateKey)
       );
 
       const createReceipt = await web3.eth.sendSignedTransaction(
@@ -135,7 +136,7 @@ export class WalletResolver {
 
       // Sign inputs with sender private key
       bitcoreUtxos.forEach((utxo, index) => {
-        const PrivateKey = new bitcore.PrivateKey(privateKey);
+        const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
         txb.sign(PrivateKey, index);
       });
 

@@ -46,7 +46,7 @@ async function FormatedData(HashId, key, mainNet) {
                 const source_address = wallet.address;
                 const newBalance = await axios_1.default.get(`https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`);
                 const coinPriceActual = await (0, getCoinPrice_1.CoinPrice)("BTC");
-                wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.balance) / convertFactor).toFixed(10);
+                wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.final_balance) / convertFactor).toFixed(10);
                 wallet.coinPrice = coinPriceActual;
             }
             else if (wallet.WalletType === "ETH") {

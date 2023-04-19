@@ -48,7 +48,9 @@ const bitcore_lib_1 = require("bitcore-lib");
 const DeleteWallet_1 = require("../Domain/DeleteWallet");
 const axios_1 = __importDefault(require("axios"));
 const bitcore = __importStar(require("bitcore-lib"));
+const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
 const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
+const crypto = new ComunicationSystemAuth_1.default();
 let WalletResolver = class WalletResolver {
     async getWallets(key, HashId) {
         return await (0, findWallets_1.FindWallets)(HashId, key);
@@ -73,7 +75,7 @@ let WalletResolver = class WalletResolver {
             name: name,
             WalletType: "BTC",
             address: address.toString(),
-            privateKey: privateKey.toString(),
+            privateKey: crypto.encrypt(privateKey.toString()),
         };
         let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
         return await (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
@@ -88,7 +90,7 @@ let WalletResolver = class WalletResolver {
                 chain: "mainnet",
                 hardfork: "London",
                 gas: gasPrice,
-            }, privateKey);
+            }, crypto.decrypt(privateKey));
             const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
             return createReceipt.transactionHash;
         }
@@ -132,7 +134,7 @@ let WalletResolver = class WalletResolver {
             }
             // Sign inputs with sender private key
             bitcoreUtxos.forEach((utxo, index) => {
-                const PrivateKey = new bitcore.PrivateKey(privateKey);
+                const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
                 txb.sign(PrivateKey, index);
             });
             // Build and broadcast the transaction
