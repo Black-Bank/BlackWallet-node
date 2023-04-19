@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.hasUser = void 0;
 async function hasUser(Email, key) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {

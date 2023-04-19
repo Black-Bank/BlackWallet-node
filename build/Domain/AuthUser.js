@@ -5,9 +5,9 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
-async function AuthUser(Email, key, password) {
+async function AuthUser(Email, password) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
     function data() {
         return new Promise((resolve) => {
