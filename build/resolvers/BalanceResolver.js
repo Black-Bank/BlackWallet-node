@@ -17,36 +17,35 @@ const type_graphql_1 = require("type-graphql");
 const findBalance_1 = require("../database/balance/findBalance");
 const insertBalance_1 = require("../database/balance/insertBalance");
 const removeBalance_1 = require("../database/balance/removeBalance");
-const balance_1 = require("../entities/balance");
+const Balance_1 = require("../entities/Balance");
 const formatedData_1 = require("../database/balance/formatedData");
 const Wallet_1 = require("../entities/Wallet");
 const getCoinPrice_1 = require("../Domain/getCoinPrice");
 let BalanceResolver = class BalanceResolver {
-    async getBalance(key, HashId) {
-        return await (0, findBalance_1.FindBalance)(HashId, key);
+    async getBalance(Email) {
+        return await (0, findBalance_1.FindBalance)(Email);
     }
     async CoinPrice(coin) {
         return await (0, getCoinPrice_1.CoinPrice)(coin);
     }
-    async getFormatedData(key, HashId, mainNet) {
-        return await (0, formatedData_1.FormatedData)(HashId, key, mainNet);
+    async getFormatedData(Email, mainNet) {
+        return await (0, formatedData_1.FormatedData)(Email, mainNet);
     }
     RemoveBalance(key, HashId, removeOption) {
         (0, removeBalance_1.RemoveBalance)(HashId, key, removeOption);
         return true;
     }
-    async InsertBalance(key, HashId, newBalance) {
-        let lastBalance = await (0, findBalance_1.FindBalance)(HashId, key);
-        (0, insertBalance_1.InsertBalance)(HashId, key, newBalance, lastBalance);
+    async InsertBalance(Email, newBalance) {
+        let lastBalance = await (0, findBalance_1.FindBalance)(Email);
+        (0, insertBalance_1.InsertBalance)(Email, newBalance, lastBalance);
         return true;
     }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => balance_1.Balance),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("HashId")),
+    (0, type_graphql_1.Query)(() => Balance_1.Balance),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getBalance", null);
 __decorate([
@@ -58,11 +57,10 @@ __decorate([
 ], BalanceResolver.prototype, "CoinPrice", null);
 __decorate([
     (0, type_graphql_1.Query)(() => [Wallet_1.Wallet]),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("HashId")),
-    __param(2, (0, type_graphql_1.Arg)("mainNet")),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __param(1, (0, type_graphql_1.Arg)("mainNet")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getFormatedData", null);
 __decorate([
@@ -76,11 +74,10 @@ __decorate([
 ], BalanceResolver.prototype, "RemoveBalance", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean || String),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("HashId")),
-    __param(2, (0, type_graphql_1.Arg)("NewBalance")),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __param(1, (0, type_graphql_1.Arg)("NewBalance")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "InsertBalance", null);
 BalanceResolver = __decorate([

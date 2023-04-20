@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsertBalance = void 0;
-function InsertBalance(HashId, key, newBalance, lastBalance) {
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
+require("dotenv").config({ path: dotenvPath });
+function InsertBalance(Email, newBalance, lastBalance) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     mongodb.connect(url, async (erro, banco) => {
         if (erro) {
             throw erro;
         }
         const dbo = banco.db("userInfo");
-        let query = { idHash: HashId };
+        let query = { Email: Email };
         const dayLimit = 7;
         const weekLimit = 4;
         const monthLimit = 6;

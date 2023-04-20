@@ -12,11 +12,6 @@ export async function AuthUser(Email: string, password: string) {
     password.indexOf(process.env.PASSWORD_EARLY)
   );
 
-  const passwordAuth = password.substring(
-    0,
-    password.indexOf(process.env.PASSWORD_EARLY)
-  );
-
   function data() {
     return new Promise<boolean>((resolve) => {
       mongodb.connect(url, (erro: { message: string }, banco: any) => {

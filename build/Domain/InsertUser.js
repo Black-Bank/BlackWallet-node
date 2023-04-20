@@ -23,7 +23,12 @@ async function InsertUser(Email, password) {
                 };
                 const financeDocument = {
                     Email: Email,
-                    financialHistory: { month: [0], week: [0], day: [0] },
+                    financialHistory: {
+                        month: [0],
+                        week: [0],
+                        day: [0],
+                        updateDate: "10/1/2000",
+                    },
                 };
                 dbo
                     .collection("financialData")
