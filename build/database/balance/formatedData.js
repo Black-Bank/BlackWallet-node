@@ -10,10 +10,10 @@ const getCoinPrice_1 = require("../../Domain/getCoinPrice");
 const path = require("path");
 const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
-async function FormatedData(Email, mainNet) {
+async function FormatedData(Email) {
     const mongodb = require("mongodb").MongoClient;
     const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
-    const web3 = new web3_1.default(mainNet);
+    const web3 = new web3_1.default(process.env.ETH_MAINNET);
     let result = [];
     function data() {
         return new Promise((resolve) => {

@@ -27,8 +27,8 @@ let BalanceResolver = class BalanceResolver {
     async CoinPrice(coin) {
         return await (0, getCoinPrice_1.CoinPrice)(coin);
     }
-    async getFormatedData(Email, mainNet) {
-        return await (0, formatedData_1.FormatedData)(Email, mainNet);
+    async getFormatedData(Email) {
+        return await (0, formatedData_1.FormatedData)(Email);
     }
     async InsertBalance(Email, newBalance) {
         let lastBalance = await (0, findBalance_1.FindBalance)(Email);
@@ -53,9 +53,8 @@ __decorate([
 __decorate([
     (0, type_graphql_1.Query)(() => [Wallet_1.Wallet]),
     __param(0, (0, type_graphql_1.Arg)("Email")),
-    __param(1, (0, type_graphql_1.Arg)("mainNet")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getFormatedData", null);
 __decorate([
