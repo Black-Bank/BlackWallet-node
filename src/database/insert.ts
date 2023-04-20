@@ -1,17 +1,16 @@
-import { Wallet } from "../entities/Wallet";
-
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
 export async function InsertWallet(
   param: {
     name: string;
     address: string;
     privateKey: string;
   },
-  HashId: string,
-  key: string,
+  Email: string,
   lastWallet: any
 ) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
   let result = [];
   function data() {
     return new Promise<void>((resolve) => {
@@ -20,7 +19,7 @@ export async function InsertWallet(
           throw erro;
         }
         const dbo = banco.db("userInfo");
-        let query = { idHash: HashId };
+        let query = { Email: Email };
         lastWallet.push(param);
         let newWallet = { $set: { carteiras: lastWallet } };
 

@@ -14,19 +14,10 @@ const web3 = new Web3(
 const crypto = new Crypto();
 @Resolver()
 export class WalletResolver {
-  @Query(() => [Wallet])
-  async getWallets(
-    @Arg("key") key: string,
-    @Arg("HashId") HashId: string
-  ): Promise<Array<Wallet>> {
-    return await FindWallets(HashId, key);
-  }
-
   @Mutation(() => Boolean)
   async createEthWallet(
-    @Arg("key") key: string,
     @Arg("name") name: string,
-    @Arg("HashId") HashId: string
+    @Arg("Email") Email: string
   ): Promise<boolean> {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
@@ -37,15 +28,14 @@ export class WalletResolver {
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };
-    let lastWallet = await FindWallets(HashId, key);
-    return await InsertWallet(newWallet, HashId, key, lastWallet);
+    let lastWallet = await FindWallets(Email);
+    return await InsertWallet(newWallet, Email, lastWallet);
   }
 
   @Mutation(() => Boolean)
   async createBTCWallet(
-    @Arg("key") key: string,
     @Arg("name") name: string,
-    @Arg("HashId") HashId: string
+    @Arg("Email") Email: string
   ): Promise<Boolean> {
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
@@ -55,8 +45,8 @@ export class WalletResolver {
       address: address.toString(),
       privateKey: crypto.encrypt(privateKey.toString()),
     };
-    let lastWallet = await FindWallets(HashId, key);
-    return await InsertWallet(newWallet, HashId, key, lastWallet);
+    let lastWallet = await FindWallets(Email);
+    return await InsertWallet(newWallet, Email, lastWallet);
   }
   @Mutation(() => String)
   async createTransaction(
@@ -157,10 +147,9 @@ export class WalletResolver {
 
   @Mutation(() => Boolean)
   async deleteWallet(
-    @Arg("HashId") HashId: string,
-    @Arg("key") key: string,
+    @Arg("Email") Email: string,
     @Arg("address") address: string
   ): Promise<Boolean> {
-    return await DeleteWallets(HashId, key, address);
+    return await DeleteWallets(Email, address);
   }
 }

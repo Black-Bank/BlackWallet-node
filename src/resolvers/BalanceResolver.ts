@@ -28,16 +28,6 @@ export class BalanceResolver {
     return await FormatedData(Email, mainNet);
   }
 
-  @Mutation(() => Boolean)
-  RemoveBalance(
-    @Arg("key") key: string,
-    @Arg("HashId") HashId: string,
-    @Arg("removeOption") removeOption: string
-  ): boolean {
-    RemoveBalance(HashId, key, removeOption);
-    return true;
-  }
-
   @Mutation(() => Boolean || String)
   async InsertBalance(
     @Arg("Email") Email: string,

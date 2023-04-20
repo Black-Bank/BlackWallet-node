@@ -40,7 +40,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletResolver = void 0;
 const type_graphql_1 = require("type-graphql");
-const Wallet_1 = require("../entities/Wallet");
 const web3_1 = __importDefault(require("web3"));
 const insert_1 = require("../database/insert");
 const findWallets_1 = require("../database/findWallets");
@@ -52,10 +51,7 @@ const ComunicationSystemAuth_1 = __importDefault(require("../services/Comunicati
 const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 const crypto = new ComunicationSystemAuth_1.default();
 let WalletResolver = class WalletResolver {
-    async getWallets(key, HashId) {
-        return await (0, findWallets_1.FindWallets)(HashId, key);
-    }
-    async createEthWallet(key, name, HashId) {
+    async createEthWallet(name, Email) {
         const wallet = web3.eth.accounts.wallet.create(0);
         const account = web3.eth.accounts.create();
         wallet.add(account.privateKey);
@@ -65,10 +61,10 @@ let WalletResolver = class WalletResolver {
             address: wallet[wallet.length - 1].address,
             privateKey: wallet[wallet.length - 1].privateKey,
         };
-        let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
-        return await (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
+        let lastWallet = await (0, findWallets_1.FindWallets)(Email);
+        return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
     }
-    async createBTCWallet(key, name, HashId) {
+    async createBTCWallet(name, Email) {
         const privateKey = new bitcore_lib_1.PrivateKey();
         const address = privateKey.toAddress();
         let newWallet = {
@@ -77,8 +73,8 @@ let WalletResolver = class WalletResolver {
             address: address.toString(),
             privateKey: crypto.encrypt(privateKey.toString()),
         };
-        let lastWallet = await (0, findWallets_1.FindWallets)(HashId, key);
-        return await (0, insert_1.InsertWallet)(newWallet, HashId, key, lastWallet);
+        let lastWallet = await (0, findWallets_1.FindWallets)(Email);
+        return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
     }
     async createTransaction(coin, addressFrom, privateKey, addressTo, value) {
         if (coin === "ETH") {
@@ -147,34 +143,24 @@ let WalletResolver = class WalletResolver {
             return broadcastResult.txid;
         }
     }
-    async deleteWallet(HashId, key, address) {
-        return await (0, DeleteWallet_1.DeleteWallets)(HashId, key, address);
+    async deleteWallet(Email, address) {
+        return await (0, DeleteWallet_1.DeleteWallets)(Email, address);
     }
 };
 __decorate([
-    (0, type_graphql_1.Query)(() => [Wallet_1.Wallet]),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("HashId")),
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Arg)("name")),
+    __param(1, (0, type_graphql_1.Arg)("Email")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], WalletResolver.prototype, "getWallets", null);
-__decorate([
-    (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("name")),
-    __param(2, (0, type_graphql_1.Arg)("HashId")),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createEthWallet", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("name")),
-    __param(2, (0, type_graphql_1.Arg)("HashId")),
+    __param(0, (0, type_graphql_1.Arg)("name")),
+    __param(1, (0, type_graphql_1.Arg)("Email")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createBTCWallet", null);
 __decorate([
@@ -190,11 +176,10 @@ __decorate([
 ], WalletResolver.prototype, "createTransaction", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("HashId")),
-    __param(1, (0, type_graphql_1.Arg)("key")),
-    __param(2, (0, type_graphql_1.Arg)("address")),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __param(1, (0, type_graphql_1.Arg)("address")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "deleteWallet", null);
 WalletResolver = __decorate([
