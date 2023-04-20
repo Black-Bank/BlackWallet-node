@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthResolver = void 0;
 const type_graphql_1 = require("type-graphql");
@@ -18,15 +21,49 @@ const InsertCypher_1 = require("../Domain/InsertCypher");
 const InsertUser_1 = require("../Domain/InsertUser");
 const AuthUser_1 = require("../Domain/AuthUser");
 const hasUser_1 = require("../Domain/hasUser");
+const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
+const crypto = new ComunicationSystemAuth_1.default();
 let AuthResolver = class AuthResolver {
-    async VerifyUser(key, Email, passWord) {
-        return (0, AuthUser_1.AuthUser)(Email, key, passWord);
+    async VerifyUser(token) {
+        const decryptedToken = crypto.decrypt(token);
+        const tokenJson = JSON.parse(decryptedToken);
+        const Email = tokenJson.email;
+        const passWord = tokenJson.passWord;
+        const time = tokenJson.timer;
+        const limitedQueryTime = 10000;
+        const dbPromise = (0, AuthUser_1.AuthUser)(Email, passWord);
+        const objToken = {
+            timer: time + limitedQueryTime,
+            email: Email,
+            isAuthenticated: false,
+        };
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const timeoutInfo = false;
+                reject(timeoutInfo);
+            }, limitedQueryTime);
+        });
+        try {
+            const result = await Promise.race([dbPromise, timeoutPromise]);
+            objToken.isAuthenticated = Boolean(result);
+            const objTokenText = JSON.stringify(objToken);
+            return crypto.encrypt(objTokenText);
+        }
+        catch (error) {
+            objToken.isAuthenticated = false;
+            const objTokenText = JSON.stringify(objToken);
+            return crypto.encrypt(objTokenText);
+        }
     }
-    async CreateUser(key, Email, passWord) {
+    async CreateUser(token) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const hasThisUser = await (0, hasUser_1.hasUser)(Email, key);
+        const decryptedToken = crypto.decrypt(token);
+        const tokenJson = JSON.parse(decryptedToken);
+        const Email = tokenJson.email;
+        const passWord = tokenJson.passWord;
+        const hasThisUser = await (0, hasUser_1.hasUser)(Email, passWord);
         if (regex.test(Email) && !hasThisUser) {
-            return await (0, InsertUser_1.InsertUser)(Email, key, passWord);
+            return await (0, InsertUser_1.InsertUser)(Email, passWord);
         }
         else if (hasThisUser) {
             throw new Error(`Invalid user Email`);
@@ -35,35 +72,30 @@ let AuthResolver = class AuthResolver {
             throw new Error(`Invalid Email`);
         }
     }
-    async UpdatePass(key, Email, passWord) {
-        return await (0, InsertCypher_1.InsertCypher)(Email, key, passWord);
+    async UpdatePass(Email, passWord) {
+        return await (0, InsertCypher_1.InsertCypher)(Email, passWord);
     }
 };
 __decorate([
-    (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("Email")),
-    __param(2, (0, type_graphql_1.Arg)("passWord")),
+    (0, type_graphql_1.Mutation)(() => String),
+    __param(0, (0, type_graphql_1.Arg)("token")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "VerifyUser", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("Email")),
-    __param(2, (0, type_graphql_1.Arg)("passWord")),
+    __param(0, (0, type_graphql_1.Arg)("token")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "CreateUser", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
-    __param(0, (0, type_graphql_1.Arg)("key")),
-    __param(1, (0, type_graphql_1.Arg)("Email")),
-    __param(2, (0, type_graphql_1.Arg)("passWord")),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __param(1, (0, type_graphql_1.Arg)("passWord")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "UpdatePass", null);
 AuthResolver = __decorate([

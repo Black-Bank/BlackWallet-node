@@ -7,24 +7,17 @@ import { PrivateKey } from "bitcore-lib";
 import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
 import * as bitcore from "bitcore-lib";
+import Crypto from "../services/ComunicationSystemAuth";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
+const crypto = new Crypto();
 @Resolver()
 export class WalletResolver {
-  @Query(() => [Wallet])
-  async getWallets(
-    @Arg("key") key: string,
-    @Arg("HashId") HashId: string
-  ): Promise<Array<Wallet>> {
-    return await FindWallets(HashId, key);
-  }
-
   @Mutation(() => Boolean)
   async createEthWallet(
-    @Arg("key") key: string,
     @Arg("name") name: string,
-    @Arg("HashId") HashId: string
+    @Arg("Email") Email: string
   ): Promise<boolean> {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
@@ -35,27 +28,25 @@ export class WalletResolver {
       address: wallet[wallet.length - 1].address,
       privateKey: wallet[wallet.length - 1].privateKey,
     };
-    let lastWallet = await FindWallets(HashId, key);
-    return await InsertWallet(newWallet, HashId, key, lastWallet);
+    let lastWallet = await FindWallets(Email);
+    return await InsertWallet(newWallet, Email, lastWallet);
   }
 
   @Mutation(() => Boolean)
   async createBTCWallet(
-    @Arg("key") key: string,
     @Arg("name") name: string,
-    @Arg("HashId") HashId: string
+    @Arg("Email") Email: string
   ): Promise<Boolean> {
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
-
     let newWallet = {
       name: name,
       WalletType: "BTC",
       address: address.toString(),
-      privateKey: privateKey.toString(),
+      privateKey: crypto.encrypt(privateKey.toString()),
     };
-    let lastWallet = await FindWallets(HashId, key);
-    return await InsertWallet(newWallet, HashId, key, lastWallet);
+    let lastWallet = await FindWallets(Email);
+    return await InsertWallet(newWallet, Email, lastWallet);
   }
   @Mutation(() => String)
   async createTransaction(
@@ -76,7 +67,7 @@ export class WalletResolver {
           hardfork: "London",
           gas: gasPrice,
         },
-        privateKey
+        crypto.decrypt(privateKey)
       );
 
       const createReceipt = await web3.eth.sendSignedTransaction(
@@ -135,7 +126,7 @@ export class WalletResolver {
 
       // Sign inputs with sender private key
       bitcoreUtxos.forEach((utxo, index) => {
-        const PrivateKey = new bitcore.PrivateKey(privateKey);
+        const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
         txb.sign(PrivateKey, index);
       });
 
@@ -156,10 +147,9 @@ export class WalletResolver {
 
   @Mutation(() => Boolean)
   async deleteWallet(
-    @Arg("HashId") HashId: string,
-    @Arg("key") key: string,
+    @Arg("Email") Email: string,
     @Arg("address") address: string
   ): Promise<Boolean> {
-    return await DeleteWallets(HashId, key, address);
+    return await DeleteWallets(Email, address);
   }
 }

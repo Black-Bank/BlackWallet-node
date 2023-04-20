@@ -5,9 +5,9 @@ const cypher_1 = require("./cypher");
 const path = require("path");
 const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
-async function InsertUser(Email, key, password) {
+async function InsertUser(Email, password) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     function data() {
         const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
         return new Promise((resolve) => {
@@ -23,7 +23,12 @@ async function InsertUser(Email, key, password) {
                 };
                 const financeDocument = {
                     Email: Email,
-                    financialHistory: { month: [0], week: [0], day: [0] },
+                    financialHistory: {
+                        month: [0],
+                        week: [0],
+                        day: [0],
+                        updateDate: "10/1/2000",
+                    },
                 };
                 dbo
                     .collection("financialData")

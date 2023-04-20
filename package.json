@@ -22,6 +22,7 @@
     "mongodb": "^4.11.0",
     "react-native-randombytes": "^3.6.1",
     "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
     "type-graphql": "^1.1.1",
     "uuidv4": "^6.2.13",
     "web3": "^1.7.5"

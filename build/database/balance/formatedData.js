@@ -7,9 +7,12 @@ exports.FormatedData = void 0;
 const axios_1 = __importDefault(require("axios"));
 const web3_1 = __importDefault(require("web3"));
 const getCoinPrice_1 = require("../../Domain/getCoinPrice");
-async function FormatedData(HashId, key, mainNet) {
+const path = require("path");
+const dotenvPath = path.resolve(__dirname, "../../.env");
+require("dotenv").config({ path: dotenvPath });
+async function FormatedData(Email, mainNet) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
     const web3 = new web3_1.default(mainNet);
     let result = [];
     function data() {
@@ -19,7 +22,7 @@ async function FormatedData(HashId, key, mainNet) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { idHash: HashId };
+                let query = { Email: Email };
                 dbo
                     .collection("master")
                     .find(query)
@@ -46,7 +49,7 @@ async function FormatedData(HashId, key, mainNet) {
                 const source_address = wallet.address;
                 const newBalance = await axios_1.default.get(`https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`);
                 const coinPriceActual = await (0, getCoinPrice_1.CoinPrice)("BTC");
-                wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.balance) / convertFactor).toFixed(10);
+                wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.final_balance) / convertFactor).toFixed(10);
                 wallet.coinPrice = coinPriceActual;
             }
             else if (wallet.WalletType === "ETH") {
