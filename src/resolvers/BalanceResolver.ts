@@ -21,11 +21,8 @@ export class BalanceResolver {
   }
 
   @Query(() => [Wallet])
-  async getFormatedData(
-    @Arg("Email") Email: string,
-    @Arg("mainNet") mainNet: string
-  ): Promise<Array<Wallet>> {
-    return await FormatedData(Email, mainNet);
+  async getFormatedData(@Arg("Email") Email: string): Promise<Array<Wallet>> {
+    return await FormatedData(Email);
   }
 
   @Mutation(() => Boolean || String)
