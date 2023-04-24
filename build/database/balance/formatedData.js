@@ -41,24 +41,28 @@ async function FormatedData(Email) {
         });
     }
     async function ReturnData() {
-        await data();
+        const coinPrices = await Promise.all([
+            (0, getCoinPrice_1.CoinPrice)("BTC"),
+            (0, getCoinPrice_1.CoinPrice)("ETH"),
+            data(),
+        ]);
+        const coinBTCPriceActual = coinPrices[0];
+        const coinETHPriceActual = coinPrices[1];
         for (let i = 0; i < result[0].length; i++) {
             const wallet = result[0][i];
             if (wallet.WalletType === "BTC") {
                 const convertFactor = 100000000;
                 const source_address = wallet.address;
                 const newBalance = await axios_1.default.get(`https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`);
-                const coinPriceActual = await (0, getCoinPrice_1.CoinPrice)("BTC");
                 wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.final_balance) / convertFactor).toFixed(10);
-                wallet.coinPrice = coinPriceActual;
+                wallet.coinPrice = coinBTCPriceActual;
             }
             else if (wallet.WalletType === "ETH") {
                 const convertFactor = 1000000000000000000;
                 const source_address = wallet.address;
                 let newBalance = await web3.eth.getBalance(source_address);
-                const coinPriceActual = await (0, getCoinPrice_1.CoinPrice)("ETH");
                 wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
-                wallet.coinPrice = coinPriceActual;
+                wallet.coinPrice = coinETHPriceActual;
             }
         }
         const totalBalance = result[0]
