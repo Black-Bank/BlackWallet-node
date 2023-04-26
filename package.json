@@ -17,6 +17,7 @@
     "bitcore-lib": "^8.25.40",
     "class-validator": "^0.13.2",
     "coinkey": "^3.0.0",
+    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "emailjs": "^0.3.16",
     "graphql": "15.8.0",
@@ -30,6 +31,7 @@
     "web3": "^1.7.5"
   },
   "devDependencies": {
+    "@types/cacheable-request": "^8.3.2",
     "@types/node": "^18.7.15",
     "nodemon": "^2.0.19",
     "typescript": "^4.8.2"
