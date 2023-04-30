@@ -24,6 +24,7 @@ async function InsertCypher(Email, password) {
                     if (erro) {
                         throw erro;
                     }
+                    console.log("change", Boolean(resultado.modifiedCount));
                     resolve(Boolean(resultado.modifiedCount));
                     banco.close();
                 });
