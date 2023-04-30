@@ -24,6 +24,7 @@ const hasUser_1 = require("../Domain/hasUser");
 const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
 const SendEmail_1 = require("../Domain/SendEmail");
 const Send_1 = require("../entities/Send");
+const sendSignUpEmail_1 = require("../Domain/sendSignUpEmail");
 const crypto = new ComunicationSystemAuth_1.default();
 let AuthResolver = class AuthResolver {
     async VerifyUser(token) {
@@ -80,6 +81,9 @@ let AuthResolver = class AuthResolver {
     async SendCodePassEmail(Email) {
         return await (0, SendEmail_1.SendEmail)(Email);
     }
+    async SendSignUpCodePassEmail(Email) {
+        return await (0, sendSignUpEmail_1.SendSignUpEmail)(Email);
+    }
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),
@@ -110,6 +114,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "SendCodePassEmail", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Send_1.Send),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AuthResolver.prototype, "SendSignUpCodePassEmail", null);
 AuthResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], AuthResolver);
