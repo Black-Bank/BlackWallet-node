@@ -6,6 +6,7 @@ import { hasUser } from "../Domain/hasUser";
 import Crypto from "../services/ComunicationSystemAuth";
 import { SendEmail } from "../Domain/SendEmail";
 import { Send } from "../entities/Send";
+import { SendSignUpEmail } from "../Domain/sendSignUpEmail";
 
 const crypto = new Crypto();
 @Resolver()
@@ -73,5 +74,10 @@ export class AuthResolver {
   @Mutation(() => Send)
   async SendCodePassEmail(@Arg("Email") Email: string): Promise<Send> {
     return await SendEmail(Email);
+  }
+
+  @Mutation(() => Send)
+  async SendSignUpCodePassEmail(@Arg("Email") Email: string): Promise<Send> {
+    return await SendSignUpEmail(Email);
   }
 }
