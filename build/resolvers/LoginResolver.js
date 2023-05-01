@@ -25,6 +25,7 @@ const ComunicationSystemAuth_1 = __importDefault(require("../services/Comunicati
 const SendEmail_1 = require("../Domain/SendEmail");
 const Send_1 = require("../entities/Send");
 const sendSignUpEmail_1 = require("../Domain/sendSignUpEmail");
+const sendDeleteWalletEmail_1 = require("../Domain/sendDeleteWalletEmail");
 const crypto = new ComunicationSystemAuth_1.default();
 let AuthResolver = class AuthResolver {
     async VerifyUser(token) {
@@ -33,7 +34,7 @@ let AuthResolver = class AuthResolver {
         const Email = tokenJson.email;
         const passWord = tokenJson.passWord;
         const time = tokenJson.timer;
-        const limitedQueryTime = 10000;
+        const limitedQueryTime = 20000;
         const dbPromise = (0, AuthUser_1.AuthUser)(Email, passWord);
         const objToken = {
             timer: time + limitedQueryTime,
@@ -84,6 +85,9 @@ let AuthResolver = class AuthResolver {
     async SendSignUpCodePassEmail(Email) {
         return await (0, sendSignUpEmail_1.SendSignUpEmail)(Email);
     }
+    async SendDeleteWalletCodeEmail(Email) {
+        return await (0, sendDeleteWalletEmail_1.SendDeleteWalletEmail)(Email);
+    }
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),
@@ -121,6 +125,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "SendSignUpCodePassEmail", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Send_1.Send),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AuthResolver.prototype, "SendDeleteWalletCodeEmail", null);
 AuthResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], AuthResolver);
