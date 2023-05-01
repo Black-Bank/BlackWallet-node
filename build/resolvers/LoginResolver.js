@@ -32,7 +32,7 @@ let AuthResolver = class AuthResolver {
         const Email = tokenJson.email;
         const passWord = tokenJson.passWord;
         const time = tokenJson.timer;
-        const limitedQueryTime = 10000;
+        const limitedQueryTime = 20000;
         const dbPromise = (0, AuthUser_1.AuthUser)(Email, passWord);
         const objToken = {
             timer: time + limitedQueryTime,
