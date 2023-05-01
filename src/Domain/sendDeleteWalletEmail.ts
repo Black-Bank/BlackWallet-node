@@ -7,7 +7,7 @@ const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
 const fs = require("fs");
 const crypto = new Crypto();
-export async function SendSignUpEmail(destinatario): Promise<Send> {
+export async function SendDeleteWalletEmail(destinatario): Promise<Send> {
   const field = "ABCDEFGHIJKLMNOPQRSTUVWYXZ123456789";
   let codigoResgate = "";
   const codeLength = 6;
@@ -19,7 +19,7 @@ export async function SendSignUpEmail(destinatario): Promise<Send> {
     "..",
     "..",
     "EmailTemplates",
-    "cadastro.html"
+    "deleteWallet.html"
   );
   const resgateSenhaHTML = fs.readFileSync(templatePath, "utf8");
 
@@ -34,7 +34,7 @@ export async function SendSignUpEmail(destinatario): Promise<Send> {
   const message = {
     from: "Credit Black <blackbankexecutive@gmail.com>",
     to: destinatario,
-    subject: "Código de cadastro de usuário",
+    subject: "Código de deleção de carteira",
     attachment: [
       {
         data: resgateSenhaHTML.replace("[CODIGO_RESGATE]", codigoResgate),

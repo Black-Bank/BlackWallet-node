@@ -7,6 +7,7 @@ import Crypto from "../services/ComunicationSystemAuth";
 import { SendEmail } from "../Domain/SendEmail";
 import { Send } from "../entities/Send";
 import { SendSignUpEmail } from "../Domain/sendSignUpEmail";
+import { SendDeleteWalletEmail } from "../Domain/sendDeleteWalletEmail";
 
 const crypto = new Crypto();
 @Resolver()
@@ -79,5 +80,10 @@ export class AuthResolver {
   @Mutation(() => Send)
   async SendSignUpCodePassEmail(@Arg("Email") Email: string): Promise<Send> {
     return await SendSignUpEmail(Email);
+  }
+
+  @Mutation(() => Send)
+  async SendDeleteWalletCodeEmail(@Arg("Email") Email: string): Promise<Send> {
+    return await SendDeleteWalletEmail(Email);
   }
 }
