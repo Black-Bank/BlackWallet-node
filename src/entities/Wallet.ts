@@ -16,6 +16,8 @@ export class Wallet {
   coinPrice?: number;
   @Field()
   totalBalance?: number;
+  @Field()
+  unconfirmedBalance: number
 }
 
 @ObjectType()

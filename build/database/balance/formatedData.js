@@ -56,6 +56,7 @@ async function FormatedData(Email) {
                 const newBalance = await axios_1.default.get(`https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`);
                 wallet.balance = Number((newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.final_balance) / convertFactor).toFixed(10);
                 wallet.coinPrice = coinBTCPriceActual;
+                wallet.unconfirmedBalance = newBalance === null || newBalance === void 0 ? void 0 : newBalance.data.unconfirmed_balance;
             }
             else if (wallet.WalletType === "ETH") {
                 const convertFactor = 1000000000000000000;

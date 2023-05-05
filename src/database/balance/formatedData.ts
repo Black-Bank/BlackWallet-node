@@ -59,6 +59,7 @@ export async function FormatedData(Email: string) {
           newBalance?.data.final_balance / convertFactor
         ).toFixed(10);
         wallet.coinPrice = coinBTCPriceActual;
+        wallet.unconfirmedBalance = newBalance?.data.unconfirmed_balance
       } else if (wallet.WalletType === "ETH") {
         const convertFactor = 1000000000000000000;
         const source_address = wallet.address;

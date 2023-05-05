@@ -41,6 +41,10 @@ __decorate([
     (0, type_graphql_1.Field)(),
     __metadata("design:type", Number)
 ], Wallet.prototype, "totalBalance", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", Number)
+], Wallet.prototype, "unconfirmedBalance", void 0);
 Wallet = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], Wallet);
