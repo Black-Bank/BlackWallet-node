@@ -44,6 +44,9 @@ export async function FormatedData(Email: string) {
       CoinPrice("ETH"),
       data(),
     ]);
+    if (!Boolean(result[0].length)) {
+      return [];
+    }
     const coinBTCPriceActual = coinPrices[0];
     const coinETHPriceActual = coinPrices[1];
     for (let i = 0; i < result[0].length; i++) {
@@ -59,7 +62,7 @@ export async function FormatedData(Email: string) {
           newBalance?.data.final_balance / convertFactor
         ).toFixed(10);
         wallet.coinPrice = coinBTCPriceActual;
-        wallet.unconfirmedBalance = newBalance?.data.unconfirmed_balance
+        wallet.unconfirmedBalance = newBalance?.data.unconfirmed_balance;
       } else if (wallet.WalletType === "ETH") {
         const convertFactor = 1000000000000000000;
         const source_address = wallet.address;
