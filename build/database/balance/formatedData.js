@@ -46,6 +46,9 @@ async function FormatedData(Email) {
             (0, getCoinPrice_1.CoinPrice)("ETH"),
             data(),
         ]);
+        if (!Boolean(result[0].length)) {
+            return [];
+        }
         const coinBTCPriceActual = coinPrices[0];
         const coinETHPriceActual = coinPrices[1];
         for (let i = 0; i < result[0].length; i++) {
