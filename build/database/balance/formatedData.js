@@ -65,6 +65,7 @@ async function FormatedData(Email) {
                 const convertFactor = 1000000000000000000;
                 const source_address = wallet.address;
                 let newBalance = await web3.eth.getBalance(source_address);
+                wallet.unconfirmedBalance = 0;
                 wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
                 wallet.coinPrice = coinETHPriceActual;
             }
