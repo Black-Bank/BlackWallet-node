@@ -54,6 +54,7 @@ export async function FormatedData(Email: string) {
       if (wallet.WalletType === "BTC") {
         const convertFactor = 100000000;
         const source_address = wallet.address;
+
         const newBalance = await axios.get(
           `https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`
         );
@@ -67,7 +68,7 @@ export async function FormatedData(Email: string) {
         const convertFactor = 1000000000000000000;
         const source_address = wallet.address;
         let newBalance = await web3.eth.getBalance(source_address);
-
+        wallet.unconfirmedBalance = 0;
         wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
         wallet.coinPrice = coinETHPriceActual;
       }
@@ -77,6 +78,7 @@ export async function FormatedData(Email: string) {
       .map((data) => data.balance * data.coinPrice)
       .reduce((total, actual) => total + actual);
     result[0].map((data) => (data.totalBalance = totalBalance));
+
     return result[0];
   }
   return await ReturnData();
