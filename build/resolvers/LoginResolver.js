@@ -26,6 +26,7 @@ const SendEmail_1 = require("../Domain/SendEmail");
 const Send_1 = require("../entities/Send");
 const sendSignUpEmail_1 = require("../Domain/sendSignUpEmail");
 const sendDeleteWalletEmail_1 = require("../Domain/sendDeleteWalletEmail");
+const sendTransferEmail_1 = require("../Domain/sendTransferEmail");
 const crypto = new ComunicationSystemAuth_1.default();
 let AuthResolver = class AuthResolver {
     async VerifyUser(token) {
@@ -88,6 +89,9 @@ let AuthResolver = class AuthResolver {
     async SendDeleteWalletCodeEmail(Email) {
         return await (0, sendDeleteWalletEmail_1.SendDeleteWalletEmail)(Email);
     }
+    async SendTransferCodeEmail(Email) {
+        return await (0, sendTransferEmail_1.SendTransferEmail)(Email);
+    }
 };
 __decorate([
     (0, type_graphql_1.Mutation)(() => String),
@@ -132,6 +136,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthResolver.prototype, "SendDeleteWalletCodeEmail", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Send_1.Send),
+    __param(0, (0, type_graphql_1.Arg)("Email")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AuthResolver.prototype, "SendTransferCodeEmail", null);
 AuthResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], AuthResolver);
