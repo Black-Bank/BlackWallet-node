@@ -54,6 +54,7 @@ export class WalletResolver {
     @Arg("addressFrom") addressFrom: string,
     @Arg("privateKey") privateKey: string,
     @Arg("addressTo") addressTo: string,
+    @Arg("fee") fee: number,
     @Arg("value") value: number
   ): Promise<string> {
     if (coin === "ETH") {
@@ -97,15 +98,9 @@ export class WalletResolver {
           })
       );
 
-      let fee = 3430;
-
       // Create a transaction builder
       const txb = new bitcore.Transaction();
 
-      if (value < 5430) {
-        // change fee value on conditional
-        fee = txb.toBuffer().length;
-      }
       // Add inputs to the transaction builder
       let inputAmount = 0;
       bitcoreUtxos.forEach((utxo) => {

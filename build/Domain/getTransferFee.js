@@ -9,14 +9,14 @@ async function getRecommendedBitcoinFee(coin) {
     // Busca a taxa média atual em satoshis por byte
     if (coin === "ETH") {
         return {
-            fatestFee: 0,
-            MediumFee: 0,
-            LowFee: 0,
-            economicFee: 0,
+            fatestFee: 21000,
+            MediumFee: 21000,
+            LowFee: 21000,
+            economicFee: 21000,
         };
     }
     else {
-        const satoshisPerByte = 150;
+        const satoshisPerByte = 220;
         const response = await axios_1.default.get("https://mempool.space/api/v1/fees/recommended");
         const fastestFee = response.data.fastestFee;
         const halfHourFee = response.data.halfHourFee;

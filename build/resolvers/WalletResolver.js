@@ -76,7 +76,7 @@ let WalletResolver = class WalletResolver {
         let lastWallet = await (0, findWallets_1.FindWallets)(Email);
         return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
     }
-    async createTransaction(coin, addressFrom, privateKey, addressTo, value) {
+    async createTransaction(coin, addressFrom, privateKey, addressTo, fee, value) {
         if (coin === "ETH") {
             const gasPrice = "21000";
             const tx = await web3.eth.accounts.signTransaction({
@@ -104,13 +104,8 @@ let WalletResolver = class WalletResolver {
                 scriptPubKey: new bitcore.Script(utxo.script),
                 satoshis: utxo.value,
             }));
-            let fee = 3430;
             // Create a transaction builder
             const txb = new bitcore.Transaction();
-            if (value < 5430) {
-                // change fee value on conditional
-                fee = txb.toBuffer().length;
-            }
             // Add inputs to the transaction builder
             let inputAmount = 0;
             bitcoreUtxos.forEach((utxo) => {
@@ -169,9 +164,10 @@ __decorate([
     __param(1, (0, type_graphql_1.Arg)("addressFrom")),
     __param(2, (0, type_graphql_1.Arg)("privateKey")),
     __param(3, (0, type_graphql_1.Arg)("addressTo")),
-    __param(4, (0, type_graphql_1.Arg)("value")),
+    __param(4, (0, type_graphql_1.Arg)("fee")),
+    __param(5, (0, type_graphql_1.Arg)("value")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, Number]),
+    __metadata("design:paramtypes", [String, String, String, String, Number, Number]),
     __metadata("design:returntype", Promise)
 ], WalletResolver.prototype, "createTransaction", null);
 __decorate([
