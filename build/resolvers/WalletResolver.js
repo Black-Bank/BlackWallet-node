@@ -104,7 +104,7 @@ let WalletResolver = class WalletResolver {
                 scriptPubKey: new bitcore.Script(utxo.script),
                 satoshis: utxo.value,
             }));
-            let fee = 5430;
+            let fee = 3430;
             // Create a transaction builder
             const txb = new bitcore.Transaction();
             if (value < 5430) {

@@ -80,6 +80,7 @@ export class WalletResolver {
       const utxosResponse = await axios.get(
         `https://blockchain.info/unspent?active=${addressFrom}`
       );
+
       const utxos = utxosResponse.data.unspent_outputs;
       if (!utxos || utxos.length === 0) {
         throw new Error("No UTXOs found for the sender address.");
@@ -95,10 +96,12 @@ export class WalletResolver {
             satoshis: utxo.value,
           })
       );
-      let fee = 5430;
+
+      let fee = 3430;
 
       // Create a transaction builder
       const txb = new bitcore.Transaction();
+
       if (value < 5430) {
         // change fee value on conditional
         fee = txb.toBuffer().length;
@@ -120,6 +123,7 @@ export class WalletResolver {
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
+
       if (changeAmount > 0) {
         txb.change(addressFrom);
       }
@@ -132,10 +136,12 @@ export class WalletResolver {
 
       // Build and broadcast the transaction
       const txHex = txb.serialize();
+
       const broadcastResponse = await axios.post(
         `https://api.bitcore.io/api/BTC/mainnet/tx/send`,
         { rawTx: txHex }
       );
+
       const broadcastResult = broadcastResponse.data;
       if (!broadcastResult || !broadcastResult.txid) {
         throw new Error("Transaction broadcast failed.");
