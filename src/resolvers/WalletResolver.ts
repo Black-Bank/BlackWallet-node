@@ -26,7 +26,7 @@ export class WalletResolver {
       name: name,
       WalletType: "ETH",
       address: wallet[wallet.length - 1].address,
-      privateKey: wallet[wallet.length - 1].privateKey,
+      privateKey: crypto.encrypt(wallet[wallet.length - 1].privateKey),
     };
     let lastWallet = await FindWallets(Email);
     return await InsertWallet(newWallet, Email, lastWallet);
@@ -54,10 +54,10 @@ export class WalletResolver {
     @Arg("addressFrom") addressFrom: string,
     @Arg("privateKey") privateKey: string,
     @Arg("addressTo") addressTo: string,
+    @Arg("fee") fee: number,
     @Arg("value") value: number
   ): Promise<string> {
     if (coin === "ETH") {
-      const gasPrice = "21000";
       const tx = await web3.eth.accounts.signTransaction(
         {
           from: addressFrom,
@@ -65,9 +65,9 @@ export class WalletResolver {
           value: web3.utils.toWei(String(value), "ether"),
           chain: "mainnet",
           hardfork: "London",
-          gas: gasPrice,
+          gas: fee,
         },
-        crypto.decrypt(privateKey)
+        privateKey
       );
 
       const createReceipt = await web3.eth.sendSignedTransaction(
@@ -80,6 +80,7 @@ export class WalletResolver {
       const utxosResponse = await axios.get(
         `https://blockchain.info/unspent?active=${addressFrom}`
       );
+
       const utxos = utxosResponse.data.unspent_outputs;
       if (!utxos || utxos.length === 0) {
         throw new Error("No UTXOs found for the sender address.");
@@ -95,14 +96,10 @@ export class WalletResolver {
             satoshis: utxo.value,
           })
       );
-      let fee = 5430;
 
       // Create a transaction builder
       const txb = new bitcore.Transaction();
-      if (value < 5430) {
-        // change fee value on conditional
-        fee = txb.toBuffer().length;
-      }
+
       // Add inputs to the transaction builder
       let inputAmount = 0;
       bitcoreUtxos.forEach((utxo) => {
@@ -120,6 +117,7 @@ export class WalletResolver {
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
+
       if (changeAmount > 0) {
         txb.change(addressFrom);
       }
@@ -132,10 +130,12 @@ export class WalletResolver {
 
       // Build and broadcast the transaction
       const txHex = txb.serialize();
+
       const broadcastResponse = await axios.post(
         `https://api.bitcore.io/api/BTC/mainnet/tx/send`,
         { rawTx: txHex }
       );
+
       const broadcastResult = broadcastResponse.data;
       if (!broadcastResult || !broadcastResult.txid) {
         throw new Error("Transaction broadcast failed.");

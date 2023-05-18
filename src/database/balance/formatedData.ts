@@ -55,15 +55,26 @@ export async function FormatedData(Email: string) {
         const convertFactor = 100000000;
         const source_address = wallet.address;
 
-        const newBalance = await axios.get(
-          `https://api.blockcypher.com/v1/btc/main/addrs/${source_address}/balance`
+        const balanceRequests = [
+          axios.get(`https://blockchain.info/balance?active=${source_address}`),
+          axios.get(`https://blockchain.info/unspent?active=${source_address}`),
+        ];
+        const [balanceResponse, unconfirmed_txs] = await Promise.all(
+          balanceRequests
         );
 
+        const totalUnconfirmedBalance = unconfirmed_txs?.data.unspent_outputs
+          .filter((data) => data.confirmations < 2)
+          .reduce((accumulator, utxo) => accumulator + utxo.value, 0);
+
         wallet.balance = Number(
-          newBalance?.data.final_balance / convertFactor
+          (balanceResponse.data[source_address].final_balance -
+            totalUnconfirmedBalance) /
+            convertFactor
         ).toFixed(10);
+
         wallet.coinPrice = coinBTCPriceActual;
-        wallet.unconfirmedBalance = newBalance?.data.unconfirmed_balance;
+        wallet.unconfirmedBalance = totalUnconfirmedBalance;
       } else if (wallet.WalletType === "ETH") {
         const convertFactor = 1000000000000000000;
         const source_address = wallet.address;

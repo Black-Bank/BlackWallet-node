@@ -7,6 +7,8 @@ import { Balance } from "../entities/Balance";
 import { FormatedData } from "../database/balance/formatedData";
 import { Wallet } from "../entities/Wallet";
 import { CoinPrice } from "../Domain/getCoinPrice";
+import { TransferInfo } from "../entities/InfoTransfer";
+import { getRecommendedBitcoinFee } from "../Domain/getTransferFee";
 
 @Resolver()
 export class BalanceResolver {
@@ -20,6 +22,10 @@ export class BalanceResolver {
     return await CoinPrice(coin);
   }
 
+  @Query(() => TransferInfo)
+  async getTransferInfo(@Arg("coin") coin: string): Promise<TransferInfo> {
+    return await getRecommendedBitcoinFee(coin);
+  }
   @Query(() => [Wallet])
   async getFormatedData(@Arg("Email") Email: string): Promise<Array<Wallet>> {
     return await FormatedData(Email);
