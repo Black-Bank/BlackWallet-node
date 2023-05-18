@@ -1,13 +1,17 @@
 import axios from "axios";
+import Web3 from "web3";
 
+const web3 = new Web3(
+  "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
+);
 export async function getRecommendedBitcoinFee(coin) {
-  // Busca a taxa média atual em satoshis por byte
+  const gasPrice = Number(await web3.eth.getGasPrice());
   if (coin === "ETH") {
     return {
-      fatestFee: 21000,
-      MediumFee: 21000,
-      LowFee: 21000,
-      economicFee: 21000,
+      fatestFee: 21000 * gasPrice,
+      MediumFee: 21000 * gasPrice,
+      LowFee: 21000 * gasPrice,
+      economicFee: 21000 * gasPrice,
     };
   } else {
     const satoshisPerByte = 150;

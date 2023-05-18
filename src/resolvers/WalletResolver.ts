@@ -58,6 +58,8 @@ export class WalletResolver {
     @Arg("value") value: number
   ): Promise<string> {
     if (coin === "ETH") {
+      const balance = Number(await web3.eth.getBalance(addressFrom));
+      const gasPrice = await web3.eth.getGasPrice();
       const tx = await web3.eth.accounts.signTransaction(
         {
           from: addressFrom,
@@ -67,8 +69,13 @@ export class WalletResolver {
           hardfork: "London",
           gas: fee,
         },
-        privateKey
+        crypto.decrypt(privateKey)
       );
+      const gasEstimate = Number(gasPrice) * fee;
+
+      if (balance < value + gasEstimate) {
+        throw new Error("Insufficient funds to cover transaction.");
+      }
 
       const createReceipt = await web3.eth.sendSignedTransaction(
         tx.rawTransaction

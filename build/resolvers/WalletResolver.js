@@ -78,6 +78,8 @@ let WalletResolver = class WalletResolver {
     }
     async createTransaction(coin, addressFrom, privateKey, addressTo, fee, value) {
         if (coin === "ETH") {
+            const balance = Number(await web3.eth.getBalance(addressFrom));
+            const gasPrice = await web3.eth.getGasPrice();
             const tx = await web3.eth.accounts.signTransaction({
                 from: addressFrom,
                 to: addressTo,
@@ -85,7 +87,11 @@ let WalletResolver = class WalletResolver {
                 chain: "mainnet",
                 hardfork: "London",
                 gas: fee,
-            }, privateKey);
+            }, crypto.decrypt(privateKey));
+            const gasEstimate = Number(gasPrice) * fee;
+            if (balance < value + gasEstimate) {
+                throw new Error("Insufficient funds to cover transaction.");
+            }
             const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
             return createReceipt.transactionHash;
         }

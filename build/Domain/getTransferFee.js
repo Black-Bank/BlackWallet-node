@@ -5,14 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRecommendedBitcoinFee = void 0;
 const axios_1 = __importDefault(require("axios"));
+const web3_1 = __importDefault(require("web3"));
+const web3 = new web3_1.default("https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a");
 async function getRecommendedBitcoinFee(coin) {
-    // Busca a taxa média atual em satoshis por byte
+    const gasPrice = Number(await web3.eth.getGasPrice());
     if (coin === "ETH") {
         return {
-            fatestFee: 21000,
-            MediumFee: 21000,
-            LowFee: 21000,
-            economicFee: 21000,
+            fatestFee: 21000 * gasPrice,
+            MediumFee: 21000 * gasPrice,
+            LowFee: 21000 * gasPrice,
+            economicFee: 21000 * gasPrice,
         };
     }
     else {
