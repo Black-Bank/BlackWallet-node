@@ -10,7 +10,7 @@ export async function getRecommendedBitcoinFee(coin) {
       economicFee: 21000,
     };
   } else {
-    const satoshisPerByte = 220;
+    const satoshisPerByte = 150;
     const response = await axios.get(
       "https://mempool.space/api/v1/fees/recommended"
     );

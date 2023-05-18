@@ -16,7 +16,7 @@ async function getRecommendedBitcoinFee(coin) {
         };
     }
     else {
-        const satoshisPerByte = 220;
+        const satoshisPerByte = 150;
         const response = await axios_1.default.get("https://mempool.space/api/v1/fees/recommended");
         const fastestFee = response.data.fastestFee;
         const halfHourFee = response.data.halfHourFee;
