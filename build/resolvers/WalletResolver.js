@@ -59,7 +59,7 @@ let WalletResolver = class WalletResolver {
             name: name,
             WalletType: "ETH",
             address: wallet[wallet.length - 1].address,
-            privateKey: wallet[wallet.length - 1].privateKey,
+            privateKey: crypto.encrypt(wallet[wallet.length - 1].privateKey),
         };
         let lastWallet = await (0, findWallets_1.FindWallets)(Email);
         return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
@@ -78,15 +78,14 @@ let WalletResolver = class WalletResolver {
     }
     async createTransaction(coin, addressFrom, privateKey, addressTo, fee, value) {
         if (coin === "ETH") {
-            const gasPrice = "21000";
             const tx = await web3.eth.accounts.signTransaction({
                 from: addressFrom,
                 to: addressTo,
                 value: web3.utils.toWei(String(value), "ether"),
                 chain: "mainnet",
                 hardfork: "London",
-                gas: gasPrice,
-            }, crypto.decrypt(privateKey));
+                gas: fee,
+            }, privateKey);
             const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
             return createReceipt.transactionHash;
         }

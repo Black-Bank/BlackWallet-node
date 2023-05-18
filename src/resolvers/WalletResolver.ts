@@ -26,7 +26,7 @@ export class WalletResolver {
       name: name,
       WalletType: "ETH",
       address: wallet[wallet.length - 1].address,
-      privateKey: wallet[wallet.length - 1].privateKey,
+      privateKey: crypto.encrypt(wallet[wallet.length - 1].privateKey),
     };
     let lastWallet = await FindWallets(Email);
     return await InsertWallet(newWallet, Email, lastWallet);
@@ -58,7 +58,6 @@ export class WalletResolver {
     @Arg("value") value: number
   ): Promise<string> {
     if (coin === "ETH") {
-      const gasPrice = "21000";
       const tx = await web3.eth.accounts.signTransaction(
         {
           from: addressFrom,
@@ -66,9 +65,9 @@ export class WalletResolver {
           value: web3.utils.toWei(String(value), "ether"),
           chain: "mainnet",
           hardfork: "London",
-          gas: gasPrice,
+          gas: fee,
         },
-        crypto.decrypt(privateKey)
+        privateKey
       );
 
       const createReceipt = await web3.eth.sendSignedTransaction(

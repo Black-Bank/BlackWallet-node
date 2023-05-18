@@ -61,7 +61,7 @@ async function FormatedData(Email) {
                     axios_1.default.get(`https://blockchain.info/unspent?active=${source_address}`),
                 ];
                 const [balanceResponse, unconfirmed_txs] = await Promise.all(balanceRequests);
-                const totalUnconfirmedBalance = unconfirmed_txs === null || unconfirmed_txs === void 0 ? void 0 : unconfirmed_txs.data.unspent_outputs.reduce((accumulator, utxo) => accumulator + utxo.value, 0);
+                const totalUnconfirmedBalance = unconfirmed_txs === null || unconfirmed_txs === void 0 ? void 0 : unconfirmed_txs.data.unspent_outputs.filter((data) => data.confirmations < 2).reduce((accumulator, utxo) => accumulator + utxo.value, 0);
                 wallet.balance = Number((balanceResponse.data[source_address].final_balance -
                     totalUnconfirmedBalance) /
                     convertFactor).toFixed(10);
