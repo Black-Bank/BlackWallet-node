@@ -59,27 +59,31 @@ export class WalletResolver {
   ): Promise<string> {
     if (coin === "ETH") {
       const balance = Number(await web3.eth.getBalance(addressFrom));
-      const gasPrice = await web3.eth.getGasPrice();
+      const gasPrice = Number(await web3.eth.getGasPrice());
+      const valueWei = web3.utils.toWei(String(value), "ether");
+      const gasEstimate = gasPrice * fee;
+
+      if (balance < Number(valueWei) + gasEstimate) {
+        throw new Error("Insufficient funds to cover transaction.");
+      }
+
       const tx = await web3.eth.accounts.signTransaction(
         {
           from: addressFrom,
           to: addressTo,
-          value: web3.utils.toWei(String(value), "ether"),
+          value: valueWei,
           chain: "mainnet",
           hardfork: "London",
           gas: fee,
+          gasPrice: gasPrice,
         },
         crypto.decrypt(privateKey)
       );
-      const gasEstimate = Number(gasPrice) * fee;
-
-      if (balance < value + gasEstimate) {
-        throw new Error("Insufficient funds to cover transaction.");
-      }
 
       const createReceipt = await web3.eth.sendSignedTransaction(
         tx.rawTransaction
       );
+
       return createReceipt.transactionHash;
     }
     if (coin === "BTC") {
@@ -89,10 +93,10 @@ export class WalletResolver {
       );
 
       const utxos = utxosResponse.data.unspent_outputs;
+
       if (!utxos || utxos.length === 0) {
         throw new Error("No UTXOs found for the sender address.");
       }
-
       // Convert UTXOs to bitcore format
       const bitcoreUtxos = utxos.map(
         (utxo) =>
@@ -105,22 +109,29 @@ export class WalletResolver {
       );
 
       // Create a transaction builder
-      const txb = new bitcore.Transaction();
+      const txb = new bitcore.Transaction()
+        .from(utxos)
+        .to(addressTo, 546)
+        .fee(1000)
+        .change(addressFrom)
+        .enableRBF()
+        .sign(privateKey);
 
       // Add inputs to the transaction builder
       let inputAmount = 0;
       bitcoreUtxos.forEach((utxo) => {
-        txb.from(utxo);
         inputAmount += utxo.satoshis;
       });
 
       // Calculate output amount and add recipient output
-
-      const outputAmount = value;
-      txb.fee(fee).to(addressTo, outputAmount);
+      const convertFactor = 100000000;
+      const outputAmount = Math.floor(value * convertFactor);
+      //txb._inputAmount = outputAmount + fee; //boa proposta, mas necessita de atenção
+      txb.to(addressTo, outputAmount).fee(fee);
 
       // Calculate change amount and add change output
       const changeAmount = inputAmount - outputAmount - fee;
+
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
@@ -135,18 +146,19 @@ export class WalletResolver {
         txb.sign(PrivateKey, index);
       });
 
-      // Build and broadcast the transaction
       const txHex = txb.serialize();
-
+      console.log("broad ");
       const broadcastResponse = await axios.post(
         `https://api.bitcore.io/api/BTC/mainnet/tx/send`,
         { rawTx: txHex }
       );
 
+      console.log(broadcastResponse.data);
       const broadcastResult = broadcastResponse.data;
       if (!broadcastResult || !broadcastResult.txid) {
         throw new Error("Transaction broadcast failed.");
       }
+      console.log(broadcastResult.txid);
 
       return broadcastResult.txid;
     }
