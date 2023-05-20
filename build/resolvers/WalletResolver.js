@@ -112,22 +112,20 @@ let WalletResolver = class WalletResolver {
                 satoshis: utxo.value,
             }));
             // Create a transaction builder
-            const txb = new bitcore.Transaction()
-                .from(utxos)
-                .to(addressTo, 546)
-                .fee(1000)
-                .change(addressFrom)
-                .enableRBF()
-                .sign(privateKey);
+            const txb = new bitcore.Transaction().enableRBF(true);
+            // Add the sequence number with the RBF flag to all inputs
+            txb.inputs.forEach((input) => {
+                input.sequenceNumber = bitcore.Transaction.Input.DEFAULT_RBF_SEQNUMBER;
+            });
             // Add inputs to the transaction builder
             let inputAmount = 0;
             bitcoreUtxos.forEach((utxo) => {
+                txb.from(utxo);
                 inputAmount += utxo.satoshis;
             });
             // Calculate output amount and add recipient output
             const convertFactor = 100000000;
             const outputAmount = Math.floor(value * convertFactor);
-            //txb._inputAmount = outputAmount + fee; //boa proposta, mas necessita de atenção
             txb.to(addressTo, outputAmount).fee(fee);
             // Calculate change amount and add change output
             const changeAmount = inputAmount - outputAmount - fee;
@@ -143,14 +141,11 @@ let WalletResolver = class WalletResolver {
                 txb.sign(PrivateKey, index);
             });
             const txHex = txb.serialize();
-            console.log("broad ");
             const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: txHex });
-            console.log(broadcastResponse.data);
             const broadcastResult = broadcastResponse.data;
             if (!broadcastResult || !broadcastResult.txid) {
                 throw new Error("Transaction broadcast failed.");
             }
-            console.log(broadcastResult.txid);
             return broadcastResult.txid;
         }
     }

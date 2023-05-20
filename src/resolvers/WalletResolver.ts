@@ -8,6 +8,7 @@ import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
 import * as bitcore from "bitcore-lib";
 import Crypto from "../services/ComunicationSystemAuth";
+import { Transaction } from "bitcoinjs-lib";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
@@ -97,6 +98,7 @@ export class WalletResolver {
       if (!utxos || utxos.length === 0) {
         throw new Error("No UTXOs found for the sender address.");
       }
+
       // Convert UTXOs to bitcore format
       const bitcoreUtxos = utxos.map(
         (utxo) =>
@@ -109,24 +111,23 @@ export class WalletResolver {
       );
 
       // Create a transaction builder
-      const txb = new bitcore.Transaction()
-        .from(utxos)
-        .to(addressTo, 546)
-        .fee(1000)
-        .change(addressFrom)
-        .enableRBF()
-        .sign(privateKey);
+      const txb = new bitcore.Transaction().enableRBF(true);
+
+      // Add the sequence number with the RBF flag to all inputs
+      txb.inputs.forEach((input) => {
+        input.sequenceNumber = bitcore.Transaction.Input.DEFAULT_RBF_SEQNUMBER;
+      });
 
       // Add inputs to the transaction builder
       let inputAmount = 0;
       bitcoreUtxos.forEach((utxo) => {
+        txb.from(utxo);
         inputAmount += utxo.satoshis;
       });
 
       // Calculate output amount and add recipient output
       const convertFactor = 100000000;
       const outputAmount = Math.floor(value * convertFactor);
-      //txb._inputAmount = outputAmount + fee; //boa proposta, mas necessita de atenção
       txb.to(addressTo, outputAmount).fee(fee);
 
       // Calculate change amount and add change output
@@ -135,7 +136,6 @@ export class WalletResolver {
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
-
       if (changeAmount > 0) {
         txb.change(addressFrom);
       }
@@ -147,18 +147,16 @@ export class WalletResolver {
       });
 
       const txHex = txb.serialize();
-      console.log("broad ");
+
       const broadcastResponse = await axios.post(
         `https://api.bitcore.io/api/BTC/mainnet/tx/send`,
         { rawTx: txHex }
       );
 
-      console.log(broadcastResponse.data);
       const broadcastResult = broadcastResponse.data;
       if (!broadcastResult || !broadcastResult.txid) {
         throw new Error("Transaction broadcast failed.");
       }
-      console.log(broadcastResult.txid);
 
       return broadcastResult.txid;
     }
