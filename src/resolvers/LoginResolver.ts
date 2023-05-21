@@ -37,6 +37,7 @@ export class AuthResolver {
     try {
       const result = await Promise.race([dbPromise, timeoutPromise]);
       objToken.isAuthenticated = Boolean(result);
+
       const objTokenText = JSON.stringify(objToken);
 
       return crypto.encrypt(objTokenText);
