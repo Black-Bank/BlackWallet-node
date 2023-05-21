@@ -4,7 +4,7 @@ require("dotenv").config({ path: dotenvPath });
 
 export async function DeleteWallets(Email: string, address?) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
   let result = [];
 

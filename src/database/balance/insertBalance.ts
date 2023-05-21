@@ -9,7 +9,7 @@ export function InsertBalance(
   lastBalance: Balance
 ) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
   mongodb.connect(url, async (erro: { message: string }, banco: any) => {
     if (erro) {

@@ -4,7 +4,7 @@ export function RemoveBalance(
   removeOption: string
 ) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
   mongodb.connect(url, (erro: { message: string }, banco: any) => {
     if (erro) {

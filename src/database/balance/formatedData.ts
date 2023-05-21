@@ -6,7 +6,7 @@ const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
 export async function FormatedData(Email: string) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
   const web3 = new Web3(process.env.ETH_MAINNET);
   let result = [];
