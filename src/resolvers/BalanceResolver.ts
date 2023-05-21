@@ -9,6 +9,7 @@ import { Wallet } from "../entities/Wallet";
 import { CoinPrice } from "../Domain/getCoinPrice";
 import { TransferInfo } from "../entities/InfoTransfer";
 import { getRecommendedBitcoinFee } from "../Domain/getTransferFee";
+import Crypto from "../services/ComunicationSystemAuth";
 
 @Resolver()
 export class BalanceResolver {
@@ -28,6 +29,8 @@ export class BalanceResolver {
   }
   @Query(() => [Wallet])
   async getFormatedData(@Arg("Email") Email: string): Promise<Array<Wallet>> {
+    const crypto = new Crypto();
+
     return await FormatedData(Email);
   }
 

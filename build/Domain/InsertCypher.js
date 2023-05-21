@@ -9,7 +9,9 @@ async function InsertCypher(Email, password) {
     const mongodb = require("mongodb").MongoClient;
     const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
     function data() {
-        const passwordAuth = password.substring(0, password.indexOf(process.env.PASSWORD_EARLY));
+        const passwordAuth = password.substring(0, password.indexOf(process.env.NODE_ENV === "prod"
+            ? process.env.PROD_PASSWORD_EARLY
+            : process.env.PASSWORD_EARLY));
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
                 if (erro) {
