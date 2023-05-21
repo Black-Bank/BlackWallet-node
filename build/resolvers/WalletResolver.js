@@ -78,14 +78,22 @@ let WalletResolver = class WalletResolver {
     }
     async createTransaction(coin, addressFrom, privateKey, addressTo, fee, value) {
         if (coin === "ETH") {
+            const balance = Number(await web3.eth.getBalance(addressFrom));
+            const gasPrice = Number(await web3.eth.getGasPrice());
+            const valueWei = web3.utils.toWei(String(value), "ether");
+            const gasEstimate = gasPrice * fee;
+            if (balance < Number(valueWei) + gasEstimate) {
+                throw new Error("Insufficient funds to cover transaction.");
+            }
             const tx = await web3.eth.accounts.signTransaction({
                 from: addressFrom,
                 to: addressTo,
-                value: web3.utils.toWei(String(value), "ether"),
+                value: valueWei,
                 chain: "mainnet",
                 hardfork: "London",
                 gas: fee,
-            }, privateKey);
+                gasPrice: gasPrice,
+            }, crypto.decrypt(privateKey));
             const createReceipt = await web3.eth.sendSignedTransaction(tx.rawTransaction);
             return createReceipt.transactionHash;
         }
@@ -104,7 +112,11 @@ let WalletResolver = class WalletResolver {
                 satoshis: utxo.value,
             }));
             // Create a transaction builder
-            const txb = new bitcore.Transaction();
+            const txb = new bitcore.Transaction().enableRBF(true);
+            // Add the sequence number with the RBF flag to all inputs
+            txb.inputs.forEach((input) => {
+                input.sequenceNumber = bitcore.Transaction.Input.DEFAULT_RBF_SEQNUMBER;
+            });
             // Add inputs to the transaction builder
             let inputAmount = 0;
             bitcoreUtxos.forEach((utxo) => {
@@ -112,8 +124,9 @@ let WalletResolver = class WalletResolver {
                 inputAmount += utxo.satoshis;
             });
             // Calculate output amount and add recipient output
-            const outputAmount = value;
-            txb.fee(fee).to(addressTo, outputAmount);
+            const convertFactor = 100000000;
+            const outputAmount = Math.floor(value * convertFactor);
+            txb.to(addressTo, outputAmount).fee(fee);
             // Calculate change amount and add change output
             const changeAmount = inputAmount - outputAmount - fee;
             if (changeAmount < 0) {
@@ -127,7 +140,6 @@ let WalletResolver = class WalletResolver {
                 const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
                 txb.sign(PrivateKey, index);
             });
-            // Build and broadcast the transaction
             const txHex = txb.serialize();
             const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: txHex });
             const broadcastResult = broadcastResponse.data;
