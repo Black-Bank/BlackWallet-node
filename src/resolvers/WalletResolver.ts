@@ -8,6 +8,7 @@ import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
 import * as bitcore from "bitcore-lib";
 import Crypto from "../services/ComunicationSystemAuth";
+import { Transaction } from "bitcoinjs-lib";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
@@ -58,21 +59,32 @@ export class WalletResolver {
     @Arg("value") value: number
   ): Promise<string> {
     if (coin === "ETH") {
+      const balance = Number(await web3.eth.getBalance(addressFrom));
+      const gasPrice = Number(await web3.eth.getGasPrice());
+      const valueWei = web3.utils.toWei(String(value), "ether");
+      const gasEstimate = gasPrice * fee;
+
+      if (balance < Number(valueWei) + gasEstimate) {
+        throw new Error("Insufficient funds to cover transaction.");
+      }
+
       const tx = await web3.eth.accounts.signTransaction(
         {
           from: addressFrom,
           to: addressTo,
-          value: web3.utils.toWei(String(value), "ether"),
+          value: valueWei,
           chain: "mainnet",
           hardfork: "London",
           gas: fee,
+          gasPrice: gasPrice,
         },
-        privateKey
+        crypto.decrypt(privateKey)
       );
 
       const createReceipt = await web3.eth.sendSignedTransaction(
         tx.rawTransaction
       );
+
       return createReceipt.transactionHash;
     }
     if (coin === "BTC") {
@@ -82,6 +94,7 @@ export class WalletResolver {
       );
 
       const utxos = utxosResponse.data.unspent_outputs;
+
       if (!utxos || utxos.length === 0) {
         throw new Error("No UTXOs found for the sender address.");
       }
@@ -98,7 +111,12 @@ export class WalletResolver {
       );
 
       // Create a transaction builder
-      const txb = new bitcore.Transaction();
+      const txb = new bitcore.Transaction().enableRBF(true);
+
+      // Add the sequence number with the RBF flag to all inputs
+      txb.inputs.forEach((input) => {
+        input.sequenceNumber = bitcore.Transaction.Input.DEFAULT_RBF_SEQNUMBER;
+      });
 
       // Add inputs to the transaction builder
       let inputAmount = 0;
@@ -108,16 +126,16 @@ export class WalletResolver {
       });
 
       // Calculate output amount and add recipient output
-
-      const outputAmount = value;
-      txb.fee(fee).to(addressTo, outputAmount);
+      const convertFactor = 100000000;
+      const outputAmount = Math.floor(value * convertFactor);
+      txb.to(addressTo, outputAmount).fee(fee);
 
       // Calculate change amount and add change output
       const changeAmount = inputAmount - outputAmount - fee;
+
       if (changeAmount < 0) {
         throw new Error("Insufficient funds to cover transaction.");
       }
-
       if (changeAmount > 0) {
         txb.change(addressFrom);
       }
@@ -128,7 +146,6 @@ export class WalletResolver {
         txb.sign(PrivateKey, index);
       });
 
-      // Build and broadcast the transaction
       const txHex = txb.serialize();
 
       const broadcastResponse = await axios.post(

@@ -64,7 +64,7 @@ export async function FormatedData(Email: string) {
         );
 
         const totalUnconfirmedBalance = unconfirmed_txs?.data.unspent_outputs
-          .filter((data) => data.confirmations < 2)
+          .filter((data) => data.confirmations < 1)
           .reduce((accumulator, utxo) => accumulator + utxo.value, 0);
 
         wallet.balance = Number(
