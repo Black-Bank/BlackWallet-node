@@ -6,7 +6,7 @@ const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
 async function FindWallets(Email) {
     const mongodb = require("mongodb").MongoClient;
-    const url = `mongodb+srv://CreditBlack:${process.env.KEY_SECRET_MONGODB}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+    const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
     let result = [];
     function data() {
         return new Promise((resolve) => {

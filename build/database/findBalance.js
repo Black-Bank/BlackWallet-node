@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindBalance = void 0;
 async function FindBalance(HashId, key) {
   const mongodb = require("mongodb").MongoClient;
-  const url = `mongodb+srv://CreditBlack:${key}@cluster0.yfsjwse.mongodb.net/?retryWrites=true&w=majority`;
+  const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
   let result = [];
   function data() {
     return new Promise((resolve) => {
