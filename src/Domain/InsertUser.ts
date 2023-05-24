@@ -9,7 +9,11 @@ export async function InsertUser(Email: string, password: string) {
   function data() {
     const passwordAuth = password.substring(
       0,
-      password.indexOf(process.env.PASSWORD_EARLY)
+      password.indexOf(
+        process.env.NODE_ENV === "prod"
+          ? process.env.PROD_PASSWORD_EARLY
+          : process.env.PASSWORD_EARLY
+      )
     );
     return new Promise<boolean>((resolve) => {
       mongodb.connect(url, (erro: { message: string }, banco: any) => {
