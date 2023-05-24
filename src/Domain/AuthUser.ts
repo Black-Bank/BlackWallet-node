@@ -10,7 +10,7 @@ export async function AuthUser(Email: string, password: string) {
   const passwordAuth = password.substring(
     0,
     password.indexOf(
-      process.env.NODE_ENV === "prod"
+      process.env.NODE_ENV === "prod" || process.env.NODE_ENV === "production"
         ? process.env.PROD_PASSWORD_EARLY
         : process.env.PASSWORD_EARLY
     )
