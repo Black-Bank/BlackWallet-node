@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import { CoinPrice } from "../Domain/getCoinPrice";
 import axios from "axios";
+import { InsertBalance } from "../database/balance/insertBalance";
 
 const MongoClient = require("mongodb").MongoClient;
 const path = require("path");
@@ -29,6 +30,11 @@ async function getDataFromMongoDB() {
     const coinPrices = await Promise.all([CoinPrice("BTC"), CoinPrice("ETH")]);
     const coinBTCPriceActual = coinPrices[0];
     const coinETHPriceActual = coinPrices[1];
+    const date = new Date();
+    const actualYear = date?.getFullYear();
+    const Month = date.getMonth() + 1;
+    const day = date.getDate();
+    const today = `${day}/${Month}/${actualYear}`;
 
     const calculateTotalBalance = async (carteiras: any): Promise<number> => {
       let totalBalance = 0;
@@ -94,13 +100,20 @@ async function getDataFromMongoDB() {
       const totalBalance = result.find(
         (item) => item.email === Email
       ).totalBalance;
-      const updateArr = document.financialHistory.day.slice(0, lastIndex);
+      const isNewDay = Boolean(today !== document.financialHistory.updateDate);
+      if (isNewDay) {
+        InsertBalance(Email, totalBalance, document.financialHistory);
+      } else if (!isNewDay) {
+        const updateArr = document.financialHistory.day.slice(0, lastIndex);
 
-      const update = {
-        $set: { "financialHistory.day": [...updateArr, totalBalance] },
-      };
+        const update = {
+          $set: {
+            "financialHistory.day": [...updateArr, totalBalance],
+          },
+        };
 
-      await collectionUpdate.updateOne({ _id: document._id }, update);
+        await collectionUpdate.updateOne({ _id: document._id }, update);
+      }
     }
 
     prodClient.close();
