@@ -29,8 +29,6 @@ export class BalanceResolver {
   }
   @Query(() => [Wallet])
   async getFormatedData(@Arg("Email") Email: string): Promise<Array<Wallet>> {
-    const crypto = new Crypto();
-
     return await FormatedData(Email);
   }
 

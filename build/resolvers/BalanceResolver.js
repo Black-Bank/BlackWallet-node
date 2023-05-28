@@ -11,9 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BalanceResolver = void 0;
 const type_graphql_1 = require("type-graphql");
@@ -25,7 +22,6 @@ const Wallet_1 = require("../entities/Wallet");
 const getCoinPrice_1 = require("../Domain/getCoinPrice");
 const InfoTransfer_1 = require("../entities/InfoTransfer");
 const getTransferFee_1 = require("../Domain/getTransferFee");
-const ComunicationSystemAuth_1 = __importDefault(require("../services/ComunicationSystemAuth"));
 let BalanceResolver = class BalanceResolver {
     async getBalance(Email) {
         return await (0, findBalance_1.FindBalance)(Email);
@@ -37,7 +33,6 @@ let BalanceResolver = class BalanceResolver {
         return await (0, getTransferFee_1.getRecommendedBitcoinFee)(coin);
     }
     async getFormatedData(Email) {
-        const crypto = new ComunicationSystemAuth_1.default();
         return await (0, formatedData_1.FormatedData)(Email);
     }
     async InsertBalance(Email, newBalance) {
