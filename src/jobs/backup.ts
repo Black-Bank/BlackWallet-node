@@ -4,7 +4,7 @@ const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
 
 const prodURI = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
-const stgURI = `${process.env.STG_ACCESS_SECRET_MONGODB}`;
+const stgURI = `${process.env.BKP_ACCESS_SECRET_MONGODB}`;
 
 const dbName = "userInfo";
 const collections = ["master"];
