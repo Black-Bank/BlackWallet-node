@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const web3_1 = __importDefault(require("web3"));
 const getCoinPrice_1 = require("../Domain/getCoinPrice");
 const axios_1 = __importDefault(require("axios"));
+const insertBalance_1 = require("../database/balance/insertBalance");
 const MongoClient = require("mongodb").MongoClient;
 const path = require("path");
 const dotenvPath = path.resolve(__dirname, "../../.env");
@@ -29,6 +30,11 @@ async function getDataFromMongoDB() {
         const coinPrices = await Promise.all([(0, getCoinPrice_1.CoinPrice)("BTC"), (0, getCoinPrice_1.CoinPrice)("ETH")]);
         const coinBTCPriceActual = coinPrices[0];
         const coinETHPriceActual = coinPrices[1];
+        const date = new Date();
+        const actualYear = date === null || date === void 0 ? void 0 : date.getFullYear();
+        const Month = date.getMonth() + 1;
+        const day = date.getDate();
+        const today = `${day}/${Month}/${actualYear}`;
         const calculateTotalBalance = async (carteiras) => {
             let totalBalance = 0;
             for (const carteira of carteiras) {
@@ -70,11 +76,19 @@ async function getDataFromMongoDB() {
             const Email = document.Email;
             const lastIndex = document.financialHistory.day.length - 1;
             const totalBalance = result.find((item) => item.email === Email).totalBalance;
-            const updateArr = document.financialHistory.day.slice(0, lastIndex);
-            const update = {
-                $set: { "financialHistory.day": [...updateArr, totalBalance] },
-            };
-            await collectionUpdate.updateOne({ _id: document._id }, update);
+            const isNewDay = Boolean(today !== document.financialHistory.updateDate);
+            if (isNewDay) {
+                (0, insertBalance_1.InsertBalance)(Email, totalBalance, document.financialHistory);
+            }
+            else if (!isNewDay) {
+                const updateArr = document.financialHistory.day.slice(0, lastIndex);
+                const update = {
+                    $set: {
+                        "financialHistory.day": [...updateArr, totalBalance],
+                    },
+                };
+                await collectionUpdate.updateOne({ _id: document._id }, update);
+            }
         }
         prodClient.close();
     }
