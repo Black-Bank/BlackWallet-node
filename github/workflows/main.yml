@@ -31,4 +31,4 @@ jobs:
         run: yarn test  --coverage
 
       - name: Check test coverage
-        run: npx istanbul check-coverage --statements 15
+        run: npx istanbul check-coverage --statements 18
