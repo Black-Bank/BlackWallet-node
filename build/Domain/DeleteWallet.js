@@ -7,7 +7,7 @@ require("dotenv").config({ path: dotenvPath });
 async function DeleteWallets(Email, address) {
     const mongodb = require("mongodb").MongoClient;
     const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
-    let result = [];
+    const result = [];
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
@@ -15,8 +15,8 @@ async function DeleteWallets(Email, address) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { Email: Email };
-                let deleteQuery = {
+                const query = { Email: Email };
+                const deleteQuery = {
                     $pull: {
                         carteiras: { address: address },
                     },

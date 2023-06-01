@@ -18,7 +18,7 @@ export async function AuthUser(Email: string, password: string) {
 
   function data() {
     return new Promise<boolean>((resolve) => {
-      mongodb.connect(url, (erro: { message: string }, banco: any) => {
+      mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
           throw erro;
         }

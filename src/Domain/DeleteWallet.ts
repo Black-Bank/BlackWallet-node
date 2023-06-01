@@ -6,18 +6,18 @@ export async function DeleteWallets(Email: string, address?) {
   const mongodb = require("mongodb").MongoClient;
   const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
-  let result = [];
+  const result = [];
 
   function data() {
     return new Promise<void>((resolve) => {
-      mongodb.connect(url, (erro: { message: string }, banco: any) => {
+      mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
           throw erro;
         }
 
         const dbo = banco.db("userInfo");
-        let query = { Email: Email };
-        let deleteQuery = {
+        const query = { Email: Email };
+        const deleteQuery = {
           $pull: {
             carteiras: { address: address },
           },

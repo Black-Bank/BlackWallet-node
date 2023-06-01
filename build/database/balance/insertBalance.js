@@ -12,7 +12,7 @@ function InsertBalance(Email, newBalance, lastBalance) {
             throw erro;
         }
         const dbo = banco.db("userInfo");
-        let query = { Email: Email };
+        const query = { Email: Email };
         const dayLimit = 7;
         const weekLimit = 4;
         const monthLimit = 6;
@@ -51,14 +51,12 @@ function InsertBalance(Email, newBalance, lastBalance) {
             }
         }
         dayProcess();
-        let newData = {
+        const newData = {
             $set: {
                 financialHistory: lastBalance,
             },
         };
-        dbo
-            .collection("financialData")
-            .updateOne(query, newData, async (erro, resultado) => {
+        dbo.collection("financialData").updateOne(query, newData, async (erro) => {
             if (erro) {
                 throw erro;
             }

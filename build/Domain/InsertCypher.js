@@ -18,8 +18,8 @@ async function InsertCypher(Email, password) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { Email: Email };
-                let newPass = { $set: { senha: (0, cypher_1.Cypher)(passwordAuth) } };
+                const query = { Email: Email };
+                const newPass = { $set: { senha: (0, cypher_1.Cypher)(passwordAuth) } };
                 dbo
                     .collection("master")
                     .updateOne(query, newPass, async (erro, resultado) => {

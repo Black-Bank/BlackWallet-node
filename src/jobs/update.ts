@@ -36,7 +36,7 @@ async function getDataFromMongoDB() {
     const day = date.getDate();
     const today = `${day}/${Month}/${actualYear}`;
 
-    const calculateTotalBalance = async (carteiras: any): Promise<number> => {
+    const calculateTotalBalance = async (carteiras): Promise<number> => {
       let totalBalance = 0;
       for (const carteira of carteiras) {
         if (carteira.WalletType === "BTC") {
@@ -58,8 +58,7 @@ async function getDataFromMongoDB() {
           const totalUnconfirmedBalance = unconfirmed_txs?.data.unspent_outputs
             .filter((data: { confirmations: number }) => data.confirmations < 1)
             .reduce(
-              (accumulator: any, utxo: { value: any }) =>
-                accumulator + utxo.value,
+              (accumulator, utxo: { value }) => accumulator + utxo.value,
               0
             );
 
@@ -72,7 +71,7 @@ async function getDataFromMongoDB() {
         } else if (carteira.WalletType === "ETH") {
           const convertFactor = 1000000000000000000;
           const source_address = carteira.address;
-          let newBalance = await web3.eth.getBalance(source_address);
+          const newBalance = await web3.eth.getBalance(source_address);
           const balance = (Number(newBalance) / convertFactor).toFixed(6);
           totalBalance += coinETHPriceActual * Number(balance);
         }

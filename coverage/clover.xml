@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1685587221098" clover="3.2.0">
+  <project timestamp="1685587221098" name="All files">
+    <metrics statements="11" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0" elements="13" coveredelements="2" complexity="0" loc="11" ncloc="11" packages="1" files="1" classes="1"/>
+    <file name="Domain.ts" path="/Users/cyrocosta/BlackWallet-node/api/src/Currency/Domain.ts">
+      <metrics statements="11" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="5" count="0" type="stmt"/>
+      <line num="6" count="0" type="stmt"/>
+      <line num="9" count="0" type="stmt"/>
+      <line num="10" count="0" type="stmt"/>
+      <line num="12" count="0" type="stmt"/>
+      <line num="13" count="0" type="stmt"/>
+      <line num="17" count="1" type="stmt"/>
+      <line num="18" count="0" type="stmt"/>
+      <line num="19" count="0" type="stmt"/>
+      <line num="20" count="0" type="stmt"/>
+    </file>
+  </project>
+</coverage>

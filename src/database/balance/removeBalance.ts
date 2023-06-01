@@ -1,21 +1,17 @@
-export function RemoveBalance(
-  HashId: string,
-  key: string,
-  removeOption: string
-) {
+export function RemoveBalance(HashId: string, removeOption: string) {
   const mongodb = require("mongodb").MongoClient;
   const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
-  mongodb.connect(url, (erro: { message: string }, banco: any) => {
+  mongodb.connect(url, (erro: { message: string }, banco) => {
     if (erro) {
       throw erro;
     }
     const dbo = banco.db("userInfo");
-    let query = { idHash: HashId };
+    const query = { idHash: HashId };
     if (removeOption === "month") {
       dbo
         .collection("financialData")
-        .updateOne(query, { $pop: { month: -1 } }, async (erro, resultado) => {
+        .updateOne(query, { $pop: { month: -1 } }, async (erro) => {
           if (erro) {
             console.log(erro);
             throw erro;
@@ -26,7 +22,7 @@ export function RemoveBalance(
     } else if (removeOption === "week") {
       dbo
         .collection("financialData")
-        .updateOne(query, { $pop: { week: -1 } }, async (erro, resultado) => {
+        .updateOne(query, { $pop: { week: -1 } }, async (erro) => {
           if (erro) {
             console.log(erro);
             throw erro;
@@ -37,7 +33,7 @@ export function RemoveBalance(
     } else if (removeOption === "day") {
       dbo
         .collection("financialData")
-        .updateOne(query, { $pop: { day: -1 } }, async (erro, resultado) => {
+        .updateOne(query, { $pop: { day: -1 } }, async (erro) => {
           if (erro) {
             console.log(erro);
             throw erro;

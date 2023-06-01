@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FindBalance = void 0;
-async function FindBalance(HashId, key) {
+async function FindBalance(HashId) {
   const mongodb = require("mongodb").MongoClient;
   const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
   let result = [];

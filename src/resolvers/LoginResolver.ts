@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
+import { Resolver, Mutation, Arg } from "type-graphql";
 import { InsertCypher } from "../Domain/InsertCypher";
 import { InsertUser } from "../Domain/InsertUser";
 import { AuthUser } from "../Domain/AuthUser";
@@ -29,7 +29,7 @@ export class AuthResolver {
     };
     const timeoutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
-        const timeoutInfo: boolean = false;
+        const timeoutInfo = false;
         reject(timeoutInfo);
       }, limitedQueryTime);
     });

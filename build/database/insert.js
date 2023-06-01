@@ -1,12 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsertWallet = void 0;
-const path = require("path");
-const dotenvPath = path.resolve(__dirname, "../../.env");
 async function InsertWallet(param, Email, lastWallet) {
     const mongodb = require("mongodb").MongoClient;
     const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
-    let result = [];
+    const result = [];
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
@@ -14,9 +12,9 @@ async function InsertWallet(param, Email, lastWallet) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { Email: Email };
+                const query = { Email: Email };
                 lastWallet.push(param);
-                let newWallet = { $set: { carteiras: lastWallet } };
+                const newWallet = { $set: { carteiras: lastWallet } };
                 dbo
                     .collection("master")
                     .updateOne(query, newWallet, async (erro, resultado) => {
