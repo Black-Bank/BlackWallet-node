@@ -1,5 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
-import { Wallet } from "../entities/Wallet";
+import { Resolver, Mutation, Arg } from "type-graphql";
 import Web3 from "web3";
 import { InsertWallet } from "../database/insert";
 import { FindWallets } from "../database/findWallets";
@@ -8,7 +7,6 @@ import { DeleteWallets } from "../Domain/DeleteWallet";
 import axios from "axios";
 import * as bitcore from "bitcore-lib";
 import Crypto from "../services/ComunicationSystemAuth";
-import { Transaction } from "bitcoinjs-lib";
 const web3 = new Web3(
   "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
 );
@@ -23,13 +21,13 @@ export class WalletResolver {
     const wallet = web3.eth.accounts.wallet.create(0);
     const account = web3.eth.accounts.create();
     wallet.add(account.privateKey);
-    let newWallet = {
+    const newWallet = {
       name: name,
       WalletType: "ETH",
       address: wallet[wallet.length - 1].address,
       privateKey: crypto.encrypt(wallet[wallet.length - 1].privateKey),
     };
-    let lastWallet = await FindWallets(Email);
+    const lastWallet = await FindWallets(Email);
     return await InsertWallet(newWallet, Email, lastWallet);
   }
 
@@ -37,16 +35,16 @@ export class WalletResolver {
   async createBTCWallet(
     @Arg("name") name: string,
     @Arg("Email") Email: string
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const privateKey = new PrivateKey();
     const address = privateKey.toAddress();
-    let newWallet = {
+    const newWallet = {
       name: name,
       WalletType: "BTC",
       address: address.toString(),
       privateKey: crypto.encrypt(privateKey.toString()),
     };
-    let lastWallet = await FindWallets(Email);
+    const lastWallet = await FindWallets(Email);
     return await InsertWallet(newWallet, Email, lastWallet);
   }
   @Mutation(() => String)
@@ -141,7 +139,7 @@ export class WalletResolver {
       }
 
       // Sign inputs with sender private key
-      bitcoreUtxos.forEach((utxo, index) => {
+      bitcoreUtxos.forEach((index) => {
         const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
         txb.sign(PrivateKey, index);
       });
@@ -166,7 +164,7 @@ export class WalletResolver {
   async deleteWallet(
     @Arg("Email") Email: string,
     @Arg("address") address: string
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return await DeleteWallets(Email, address);
   }
 }

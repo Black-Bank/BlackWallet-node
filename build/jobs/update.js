@@ -55,7 +55,7 @@ async function getDataFromMongoDB() {
                 else if (carteira.WalletType === "ETH") {
                     const convertFactor = 1000000000000000000;
                     const source_address = carteira.address;
-                    let newBalance = await web3.eth.getBalance(source_address);
+                    const newBalance = await web3.eth.getBalance(source_address);
                     const balance = (Number(newBalance) / convertFactor).toFixed(6);
                     totalBalance += coinETHPriceActual * Number(balance);
                 }

@@ -7,7 +7,7 @@ require("dotenv").config({ path: dotenvPath });
 async function FindBalance(Email) {
     const mongodb = require("mongodb").MongoClient;
     const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
-    let result = [];
+    const result = [];
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
@@ -15,7 +15,7 @@ async function FindBalance(Email) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { Email: Email };
+                const query = { Email: Email };
                 dbo
                     .collection("financialData")
                     .find(query)

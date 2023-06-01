@@ -17,14 +17,14 @@ export async function InsertCypher(Email: string, password: string) {
       )
     );
     return new Promise<boolean>((resolve) => {
-      mongodb.connect(url, (erro: { message: string }, banco: any) => {
+      mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
           throw erro;
         }
         const dbo = banco.db("userInfo");
-        let query = { Email: Email };
+        const query = { Email: Email };
 
-        let newPass = { $set: { senha: Cypher(passwordAuth) } };
+        const newPass = { $set: { senha: Cypher(passwordAuth) } };
 
         dbo
           .collection("master")

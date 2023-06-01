@@ -17,13 +17,8 @@ async function getExchangeRate() {
     }
 }
 async function getDollarPriceInReais() {
-    try {
-        const exchangeRate = await getExchangeRate();
-        const dollarPrice = exchangeRate;
-        return { Price: dollarPrice };
-    }
-    catch (error) {
-        throw error;
-    }
+    const exchangeRate = await getExchangeRate();
+    const dollarPrice = exchangeRate;
+    return { Price: dollarPrice };
 }
 exports.getDollarPriceInReais = getDollarPriceInReais;

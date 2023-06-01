@@ -1,7 +1,6 @@
-import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
+import { Resolver, Query, Mutation, Arg } from "type-graphql";
 import { FindBalance } from "../database/balance/findBalance";
 import { InsertBalance } from "../database/balance/insertBalance";
-import { RemoveBalance } from "../database/balance/removeBalance";
 import { Balance } from "../entities/Balance";
 
 import { FormatedData } from "../database/balance/formatedData";
@@ -9,7 +8,6 @@ import { Wallet } from "../entities/Wallet";
 import { CoinPrice } from "../Domain/getCoinPrice";
 import { TransferInfo } from "../entities/InfoTransfer";
 import { getRecommendedBitcoinFee } from "../Domain/getTransferFee";
-import Crypto from "../services/ComunicationSystemAuth";
 
 @Resolver()
 export class BalanceResolver {
@@ -37,7 +35,7 @@ export class BalanceResolver {
     @Arg("Email") Email: string,
     @Arg("NewBalance") newBalance: number
   ): Promise<boolean | string> {
-    let lastBalance = await FindBalance(Email);
+    const lastBalance = await FindBalance(Email);
     InsertBalance(Email, newBalance, lastBalance);
 
     return true;

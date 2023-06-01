@@ -14,7 +14,7 @@ async function FormatedData(Email) {
     const mongodb = require("mongodb").MongoClient;
     const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
     const web3 = new web3_1.default(process.env.ETH_MAINNET);
-    let result = [];
+    const result = [];
     function data() {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
@@ -22,7 +22,7 @@ async function FormatedData(Email) {
                     throw erro;
                 }
                 const dbo = banco.db("userInfo");
-                let query = { Email: Email };
+                const query = { Email: Email };
                 dbo
                     .collection("master")
                     .find(query)
@@ -46,7 +46,7 @@ async function FormatedData(Email) {
             (0, getCoinPrice_1.CoinPrice)("ETH"),
             data(),
         ]);
-        if (!Boolean(result[0].length)) {
+        if (!result[0].length) {
             return [];
         }
         const coinBTCPriceActual = coinPrices[0];
@@ -71,7 +71,7 @@ async function FormatedData(Email) {
             else if (wallet.WalletType === "ETH") {
                 const convertFactor = 1000000000000000000;
                 const source_address = wallet.address;
-                let newBalance = await web3.eth.getBalance(source_address);
+                const newBalance = await web3.eth.getBalance(source_address);
                 wallet.unconfirmedBalance = 0;
                 wallet.balance = (Number(newBalance) / convertFactor).toFixed(6);
                 wallet.coinPrice = coinETHPriceActual;

@@ -1,6 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Args } from "type-graphql";
-import { FindBalance } from "../database/balance/findBalance";
-import { Balance } from "../entities/Balance";
+import { Resolver, Query } from "type-graphql";
 import { DolarPrice } from "./entities/dolarPrice";
 import { getDollarPriceInReais } from "./Domain";
 

@@ -36,7 +36,7 @@ let BalanceResolver = class BalanceResolver {
         return await (0, formatedData_1.FormatedData)(Email);
     }
     async InsertBalance(Email, newBalance) {
-        let lastBalance = await (0, findBalance_1.FindBalance)(Email);
+        const lastBalance = await (0, findBalance_1.FindBalance)(Email);
         (0, insertBalance_1.InsertBalance)(Email, newBalance, lastBalance);
         return true;
     }

@@ -1,0 +1,29 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "overrides": [],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    // Ignorar o uso do 'require'
+    "node": {
+      "tryExtensions": [".js", ".jsx", ".ts", ".tsx", ".json", ".node"]
+    }
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    // Permitir o uso de 'require'
+    "import/no-commonjs": "off",
+    // Permitir o uso de 'import' em vez de 'require'
+    "import/no-nodejs-modules": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "no-cond-assign": "off",
+    "no-undef": "off"
+  }
+}

@@ -1,10 +1,10 @@
-export async function hasUser(Email: string, key: string) {
+export async function hasUser(Email: string) {
   const mongodb = require("mongodb").MongoClient;
   const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
   function data() {
     return new Promise<boolean>((resolve) => {
-      mongodb.connect(url, (erro: { message: string }, banco: any) => {
+      mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
           throw erro;
         }

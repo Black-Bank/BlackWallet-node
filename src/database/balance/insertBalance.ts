@@ -11,12 +11,12 @@ export function InsertBalance(
   const mongodb = require("mongodb").MongoClient;
   const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 
-  mongodb.connect(url, async (erro: { message: string }, banco: any) => {
+  mongodb.connect(url, async (erro: { message: string }, banco) => {
     if (erro) {
       throw erro;
     }
     const dbo = banco.db("userInfo");
-    let query = { Email: Email };
+    const query = { Email: Email };
     const dayLimit = 7;
     const weekLimit = 4;
     const monthLimit = 6;
@@ -57,18 +57,16 @@ export function InsertBalance(
 
     dayProcess();
 
-    let newData = {
+    const newData = {
       $set: {
         financialHistory: lastBalance,
       },
     };
-    dbo
-      .collection("financialData")
-      .updateOne(query, newData, async (erro, resultado) => {
-        if (erro) {
-          throw erro;
-        }
-        banco.close();
-      });
+    dbo.collection("financialData").updateOne(query, newData, async (erro) => {
+      if (erro) {
+        throw erro;
+      }
+      banco.close();
+    });
   });
 }

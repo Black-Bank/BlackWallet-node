@@ -1,0 +1,34 @@
+name: Test code base
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install packages
+        run: yarn install
+
+      - name: check lint
+        run: yarn run lint
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Generate coverage report
+        run: yarn test  --coverage
+
+      - name: Check test coverage
+        run: npx istanbul check-coverage --statements 15

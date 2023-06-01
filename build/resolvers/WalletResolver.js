@@ -55,25 +55,25 @@ let WalletResolver = class WalletResolver {
         const wallet = web3.eth.accounts.wallet.create(0);
         const account = web3.eth.accounts.create();
         wallet.add(account.privateKey);
-        let newWallet = {
+        const newWallet = {
             name: name,
             WalletType: "ETH",
             address: wallet[wallet.length - 1].address,
             privateKey: crypto.encrypt(wallet[wallet.length - 1].privateKey),
         };
-        let lastWallet = await (0, findWallets_1.FindWallets)(Email);
+        const lastWallet = await (0, findWallets_1.FindWallets)(Email);
         return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
     }
     async createBTCWallet(name, Email) {
         const privateKey = new bitcore_lib_1.PrivateKey();
         const address = privateKey.toAddress();
-        let newWallet = {
+        const newWallet = {
             name: name,
             WalletType: "BTC",
             address: address.toString(),
             privateKey: crypto.encrypt(privateKey.toString()),
         };
-        let lastWallet = await (0, findWallets_1.FindWallets)(Email);
+        const lastWallet = await (0, findWallets_1.FindWallets)(Email);
         return await (0, insert_1.InsertWallet)(newWallet, Email, lastWallet);
     }
     async createTransaction(coin, addressFrom, privateKey, addressTo, fee, value) {
@@ -136,7 +136,7 @@ let WalletResolver = class WalletResolver {
                 txb.change(addressFrom);
             }
             // Sign inputs with sender private key
-            bitcoreUtxos.forEach((utxo, index) => {
+            bitcoreUtxos.forEach((index) => {
                 const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
                 txb.sign(PrivateKey, index);
             });

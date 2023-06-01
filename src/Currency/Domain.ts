@@ -15,11 +15,7 @@ async function getExchangeRate(): Promise<number> {
 }
 
 export async function getDollarPriceInReais(): Promise<DolarPrice> {
-  try {
-    const exchangeRate = await getExchangeRate();
-    const dollarPrice = exchangeRate;
-    return { Price: dollarPrice };
-  } catch (error) {
-    throw error;
-  }
+  const exchangeRate = await getExchangeRate();
+  const dollarPrice = exchangeRate;
+  return { Price: dollarPrice };
 }

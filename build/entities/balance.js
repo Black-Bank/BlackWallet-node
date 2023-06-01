@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Balance = void 0;
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const type_graphql_1 = require("type-graphql");
 let Balance = class Balance {
 };

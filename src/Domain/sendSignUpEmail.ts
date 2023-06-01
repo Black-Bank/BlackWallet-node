@@ -44,7 +44,7 @@ export async function SendSignUpEmail(destinatario): Promise<Send> {
   };
 
   return new Promise((resolve, reject) => {
-    server.send(message, (err, message) => {
+    server.send(message, (err) => {
       if (err) {
         reject({ code: "", isSend: false });
       } else {

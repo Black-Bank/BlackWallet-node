@@ -16,7 +16,7 @@ export async function InsertUser(Email: string, password: string) {
       )
     );
     return new Promise<boolean>((resolve) => {
-      mongodb.connect(url, (erro: { message: string }, banco: any) => {
+      mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
           throw erro;
         }
