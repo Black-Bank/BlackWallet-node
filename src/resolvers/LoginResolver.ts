@@ -56,7 +56,7 @@ export class AuthResolver {
     const Email = tokenJson.email;
     const passWord = tokenJson.passWord;
 
-    const hasThisUser = await hasUser(Email, passWord);
+    const hasThisUser = await hasUser(Email);
 
     if (regex.test(Email) && !hasThisUser) {
       return await InsertUser(Email, passWord);
