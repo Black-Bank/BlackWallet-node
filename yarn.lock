@@ -1750,6 +1750,13 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/bitcore-lib@^0.15.3":
+  version "0.15.3"
+  resolved "https://registry.npmjs.org/@types/bitcore-lib/-/bitcore-lib-0.15.3.tgz#1c8c76d7646ed233096eb043c16ec13d7ed9e9a0"
+  integrity sha512-5x6ffSToBwz91DX1CqIJ2X34kkAlz/qeCMMTZiMg47mIPfirtCqLVlQ/SQ2SiMJR+sxG5/mUFYbYoSuRKej6tQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bn.js@^5.1.0":
   version "5.1.1"
   resolved "https://registry.npmjs.org/@types/bn.js/-/bn.js-5.1.1.tgz"
@@ -2518,10 +2525,10 @@ bip66@^1.1.5:
   dependencies:
     safe-buffer "^5.0.1"
 
-bitcore-lib@^8.25.40:
-  version "8.25.40"
-  resolved "https://registry.npmjs.org/bitcore-lib/-/bitcore-lib-8.25.40.tgz"
-  integrity sha512-mb6kvfhoiIdoyFsDlhIFVst3HpeGjGYBf0XDxTdZ+H07EC4JuiViA3bnQ5uZbZjHFngEl0GTPaoK1Zaolutw4A==
+bitcore-lib@^10.0.5:
+  version "10.0.5"
+  resolved "https://registry.npmjs.org/bitcore-lib/-/bitcore-lib-10.0.5.tgz#8a4d068096ce2663e8d27e9c0209869a7c932c72"
+  integrity sha512-dfZoKa+gbC+BF2mCMzSGi/YX/ViIpudVp18RUvryVhkl8Cky5amyQQbTs5uzLWkNn2BuqimnxtpvvoK2eAF/gQ==
   dependencies:
     bech32 "=2.0.0"
     bip-schnorr "=0.6.4"

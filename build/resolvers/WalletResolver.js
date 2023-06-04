@@ -112,11 +112,7 @@ let WalletResolver = class WalletResolver {
                 satoshis: utxo.value,
             }));
             // Create a transaction builder
-            const txb = new bitcore.Transaction().enableRBF(true);
-            // Add the sequence number with the RBF flag to all inputs
-            txb.inputs.forEach((input) => {
-                input.sequenceNumber = bitcore.Transaction.Input.DEFAULT_RBF_SEQNUMBER;
-            });
+            const txb = new bitcore.Transaction();
             // Add inputs to the transaction builder
             let inputAmount = 0;
             bitcoreUtxos.forEach((utxo) => {
@@ -136,9 +132,9 @@ let WalletResolver = class WalletResolver {
                 txb.change(addressFrom);
             }
             // Sign inputs with sender private key
-            bitcoreUtxos.forEach((index) => {
+            bitcoreUtxos.forEach(() => {
                 const PrivateKey = new bitcore.PrivateKey(crypto.decrypt(privateKey));
-                txb.sign(PrivateKey, index);
+                txb.sign(PrivateKey);
             });
             const txHex = txb.serialize();
             const broadcastResponse = await axios_1.default.post(`https://api.bitcore.io/api/BTC/mainnet/tx/send`, { rawTx: txHex });

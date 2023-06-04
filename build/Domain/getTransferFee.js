@@ -28,11 +28,12 @@ async function getRecommendedBitcoinFee(coin) {
         const MediumFee = Math.ceil(halfHourFee * satoshisPerByte);
         const LowFee = Math.ceil(lowFee * satoshisPerByte);
         const LowestFee = Math.ceil(economicFee * satoshisPerByte);
+        const minFee = 4319;
         return {
-            fatestFee: recommendedFastestFee,
-            MediumFee: MediumFee,
-            LowFee: LowFee,
-            economicFee: LowestFee,
+            fatestFee: recommendedFastestFee > minFee ? recommendedFastestFee : minFee,
+            MediumFee: MediumFee > minFee ? MediumFee : minFee,
+            LowFee: LowFee > minFee ? LowFee : minFee,
+            economicFee: LowestFee > minFee ? LowestFee : minFee,
         };
     }
 }
