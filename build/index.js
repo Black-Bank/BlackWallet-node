@@ -8,6 +8,7 @@ const WalletResolver_1 = require("./resolvers/WalletResolver");
 const BalanceResolver_1 = require("./resolvers/BalanceResolver");
 const LoginResolver_1 = require("./resolvers/LoginResolver");
 const resolver_1 = require("./Currency/resolver");
+const resolver_2 = require("./Extract/resolver");
 async function bootstrap() {
     const server = new apollo_server_1.ApolloServer({
         schema: await (0, type_graphql_1.buildSchema)({
@@ -16,6 +17,7 @@ async function bootstrap() {
                 BalanceResolver_1.BalanceResolver,
                 LoginResolver_1.AuthResolver,
                 resolver_1.CurrencyResolver,
+                resolver_2.ExtractResolver,
             ],
         }),
         introspection: true,
