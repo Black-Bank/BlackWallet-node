@@ -84,6 +84,5 @@ export async function handleWalletsExtract(Email: string) {
       }))
     )
   );
-  console.log(transactionsResults[1].result);
   return await ExtractDomain(transactionsResults, ETHPrice, BTCPrice);
 }
