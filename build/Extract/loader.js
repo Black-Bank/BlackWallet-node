@@ -76,6 +76,7 @@ async function handleWalletsExtract(Email) {
         type: transaction.type,
         result: response.data,
     }))));
+    console.log(transactionsResults[1].result);
     return await (0, Domain_1.ExtractDomain)(transactionsResults, ETHPrice, BTCPrice);
 }
 exports.handleWalletsExtract = handleWalletsExtract;

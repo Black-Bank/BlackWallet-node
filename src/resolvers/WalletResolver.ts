@@ -47,6 +47,7 @@ export class WalletResolver {
     const lastWallet = await FindWallets(Email);
     return await InsertWallet(newWallet, Email, lastWallet);
   }
+
   @Mutation(() => String)
   async createTransaction(
     @Arg("coin") coin: string,

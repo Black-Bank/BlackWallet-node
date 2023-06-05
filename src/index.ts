@@ -6,6 +6,7 @@ import { BalanceResolver } from "./resolvers/BalanceResolver";
 import { AuthResolver } from "./resolvers/LoginResolver";
 import { CurrencyResolver } from "./Currency/resolver";
 import { ExtractResolver } from "./Extract/resolver";
+import { TransactionResolver } from "./Transaction/TransactionResolver";
 
 export async function bootstrap() {
   const server = new ApolloServer({
@@ -16,6 +17,7 @@ export async function bootstrap() {
         AuthResolver,
         CurrencyResolver,
         ExtractResolver,
+        TransactionResolver,
       ],
     }),
     introspection: true,
