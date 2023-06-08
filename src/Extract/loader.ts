@@ -2,7 +2,10 @@ import axios from "axios";
 import { CoinPrice } from "../Domain/getCoinPrice";
 import { Wallet } from "../entities/Wallet";
 import { ExtractDomain } from "./Domain";
-import { Extract } from "./type";
+import Web3 from "web3";
+const web3 = new Web3(
+  "https://mainnet.infura.io/v3/7a667ca0597c4320986d601e8cac6a0a"
+);
 
 const url = `${process.env.PROD_ACCESS_SECRET_MONGODB}`;
 const mongodb = require("mongodb").MongoClient;
@@ -25,7 +28,6 @@ function handleWalletsData(Email: string) {
             console.log("err", erro);
             throw erro;
           }
-
           resolve(resultado[0].carteiras);
           banco.close();
         });
@@ -75,15 +77,60 @@ export async function handleWalletsExtract(Email: string) {
       transactionsPromises.push(promiseWithAddress);
     });
   }
+
+  const walletETHBalance = [];
+
   const transactionsResults = await Promise.all(
-    transactionsPromises.map((transaction) =>
-      transaction.promise.then((response) => ({
-        address: transaction.address,
-        type: transaction.type,
-        result: response.data,
-      }))
+    transactionsPromises.map((wallet) =>
+      wallet.promise.then(async (response) => {
+        const transactionData = {
+          address: wallet.address,
+          type: wallet.type,
+          result: response.data,
+        };
+        if (transactionData.type === "ETH") {
+          const promisesData = [];
+          const txData = [];
+          response.data.result.forEach((transaction) => {
+            const transactionPromiseBalance = web3.eth.getBalance(
+              wallet.address,
+              transaction.blockNumber
+            );
+            promisesData.push(transactionPromiseBalance);
+            txData.push(transaction.blockNumber);
+          });
+          walletETHBalance.push({
+            address: wallet.address,
+            blockData: await Promise.all(promisesData),
+            txData,
+          });
+        }
+
+        return transactionData;
+      })
     )
   );
 
-  return await ExtractDomain(transactionsResults, ETHPrice, BTCPrice);
+  const ethBalanceData = [];
+
+  walletETHBalance.forEach((item) => {
+    const { address, blockData, txData } = item;
+    const balanceData = blockData.map((block, index) => {
+      return {
+        address: address,
+        blockData: {
+          amount: block,
+          blockNumber: txData[index],
+        },
+      };
+    });
+    ethBalanceData.push(...balanceData);
+  });
+
+  return await ExtractDomain(
+    transactionsResults,
+    ETHPrice,
+    BTCPrice,
+    ethBalanceData
+  );
 }

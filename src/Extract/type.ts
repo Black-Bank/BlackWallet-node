@@ -13,9 +13,15 @@ export class Extract {
   @Field()
   value: number;
   @Field()
+  coinValue: number;
+  @Field()
   confirmed: boolean;
   @Field()
   date: Date;
   @Field()
   fee: number;
+  @Field({ nullable: true })
+  balance?: number;
+  @Field({ nullable: true })
+  prevout?: number;
 }

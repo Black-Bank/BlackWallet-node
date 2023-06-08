@@ -66,7 +66,7 @@ let AuthResolver = class AuthResolver {
         const tokenJson = JSON.parse(decryptedToken);
         const Email = tokenJson.email;
         const passWord = tokenJson.passWord;
-        const hasThisUser = await (0, hasUser_1.hasUser)(Email, passWord);
+        const hasThisUser = await (0, hasUser_1.hasUser)(Email);
         if (regex.test(Email) && !hasThisUser) {
             return await (0, InsertUser_1.InsertUser)(Email, passWord);
         }

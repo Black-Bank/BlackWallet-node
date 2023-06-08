@@ -15,7 +15,7 @@ async function AuthUser(Email, password) {
         return new Promise((resolve) => {
             mongodb.connect(url, (erro, banco) => {
                 if (erro) {
-                    throw erro;
+                    resolve(false);
                 }
                 const dbo = banco.db("userInfo");
                 dbo
@@ -25,8 +25,9 @@ async function AuthUser(Email, password) {
                         throw erro;
                     }
                     bcrypt.compare(passwordAuth, resultado.senha, function (err, AuthResponse) {
-                        if (err)
-                            throw err;
+                        if (err) {
+                            resolve(false);
+                        }
                         resolve(Boolean(AuthResponse));
                     });
                     banco.close();

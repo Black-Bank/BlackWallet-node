@@ -35,6 +35,10 @@ __decorate([
 ], Extract.prototype, "value", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
+    __metadata("design:type", Number)
+], Extract.prototype, "coinValue", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
     __metadata("design:type", Boolean)
 ], Extract.prototype, "confirmed", void 0);
 __decorate([
@@ -45,6 +49,14 @@ __decorate([
     (0, type_graphql_1.Field)(),
     __metadata("design:type", Number)
 ], Extract.prototype, "fee", void 0);
+__decorate([
+    (0, type_graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", Number)
+], Extract.prototype, "balance", void 0);
+__decorate([
+    (0, type_graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", Number)
+], Extract.prototype, "prevout", void 0);
 Extract = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], Extract);
