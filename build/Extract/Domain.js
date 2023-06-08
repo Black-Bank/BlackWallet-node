@@ -23,35 +23,40 @@ const ExtractDomain = async (transactionsResults, ETHPrice, BTCPrice, ETHBalance
     validTransactions.forEach((wallets) => {
         if (wallets.type === "ETH") {
             const result = wallets.result;
-            result.result.forEach((tx) => {
-                var _a;
-                const transactionBlockNumber = tx.blockNumber;
-                const transactionHash = tx.hash;
-                const addressFrom = tx.from;
-                const addressTo = tx.to;
-                const transactionValue = Number(((Number(tx.value) / convertETHFactor) * ETHPrice).toFixed(2));
-                const coinValue = Number((Number(tx.value) / convertETHFactor).toFixed(18));
-                const weiTax = Number(tx.gasUsed) * Number(tx.gasPrice);
-                const transactionTax = Number(((weiTax / convertETHFactor) * ETHPrice).toFixed(2));
-                const transactionDate = new Date(Number(tx.timeStamp) * 1000);
-                const confirmed = Boolean(Number(tx.confirmations) > 0);
-                const txDataBalance = (_a = ETHBalanceData.find((tx) => { var _a; return ((_a = tx === null || tx === void 0 ? void 0 : tx.blockData) === null || _a === void 0 ? void 0 : _a.blockNumber) === transactionBlockNumber; })) === null || _a === void 0 ? void 0 : _a.blockData.amount;
-                const txBalance = Number((Number(txDataBalance) / convertETHFactor).toFixed(18));
-                const isSend = Boolean(addressFrom === wallets.address);
-                const transactionData = {
-                    hash: transactionHash,
-                    type: "ETH",
-                    addressFrom: addressFrom,
-                    addressTo: addressTo,
-                    value: transactionValue,
-                    coinValue: isSend ? -coinValue : coinValue,
-                    confirmed: confirmed,
-                    date: transactionDate,
-                    fee: transactionTax,
-                    balance: txBalance,
-                };
-                extract.push(transactionData);
-            });
+            const isContinue = !Boolean(result.result ===
+                "Max rate limit reached, please use API Key for higher rate limit");
+            if (isContinue) {
+                const response = result.result;
+                response.forEach((tx) => {
+                    var _a;
+                    const transactionBlockNumber = tx.blockNumber;
+                    const transactionHash = tx.hash;
+                    const addressFrom = tx.from;
+                    const addressTo = tx.to;
+                    const transactionValue = Number(((Number(tx.value) / convertETHFactor) * ETHPrice).toFixed(2));
+                    const coinValue = Number((Number(tx.value) / convertETHFactor).toFixed(18));
+                    const weiTax = Number(tx.gasUsed) * Number(tx.gasPrice);
+                    const transactionTax = Number(((weiTax / convertETHFactor) * ETHPrice).toFixed(2));
+                    const transactionDate = new Date(Number(tx.timeStamp) * 1000);
+                    const confirmed = Boolean(Number(tx.confirmations) > 0);
+                    const txDataBalance = (_a = ETHBalanceData.find((tx) => { var _a; return ((_a = tx === null || tx === void 0 ? void 0 : tx.blockData) === null || _a === void 0 ? void 0 : _a.blockNumber) === transactionBlockNumber; })) === null || _a === void 0 ? void 0 : _a.blockData.amount;
+                    const txBalance = Number((Number(txDataBalance) / convertETHFactor).toFixed(18));
+                    const isSend = Boolean(addressFrom === wallets.address);
+                    const transactionData = {
+                        hash: transactionHash,
+                        type: "ETH",
+                        addressFrom: addressFrom,
+                        addressTo: addressTo,
+                        value: transactionValue,
+                        coinValue: isSend ? -coinValue : coinValue,
+                        confirmed: confirmed,
+                        date: transactionDate,
+                        fee: transactionTax,
+                        balance: txBalance,
+                    };
+                    extract.push(transactionData);
+                });
+            }
         }
         else if (wallets.type === "BTC") {
             const result = wallets.result;

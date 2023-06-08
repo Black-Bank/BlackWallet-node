@@ -1,5 +1,6 @@
+/* eslint-disable no-extra-boolean-cast */
 import { Extract } from "./type";
-import { BTCBlock, ETHTxType, ITxETH, ITxService } from "./entities";
+import { BTCBlock, ETHBlock, ETHTxType, ITxETH, ITxService } from "./entities";
 const path = require("path");
 const dotenvPath = path.resolve(__dirname, "../../.env");
 require("dotenv").config({ path: dotenvPath });
@@ -34,50 +35,56 @@ export const ExtractDomain = async (
   validTransactions.forEach((wallets) => {
     if (wallets.type === "ETH") {
       const result = wallets.result as ETHTxType;
+      const isContinue = !Boolean(
+        result.result ===
+          "Max rate limit reached, please use API Key for higher rate limit"
+      );
+      if (isContinue) {
+        const response = result.result as ETHBlock[];
+        response.forEach((tx: ITxETH) => {
+          const transactionBlockNumber = tx.blockNumber;
+          const transactionHash = tx.hash;
+          const addressFrom = tx.from;
+          const addressTo = tx.to;
+          const transactionValue = Number(
+            ((Number(tx.value) / convertETHFactor) * ETHPrice).toFixed(2)
+          );
 
-      result.result.forEach((tx: ITxETH) => {
-        const transactionBlockNumber = tx.blockNumber;
-        const transactionHash = tx.hash;
-        const addressFrom = tx.from;
-        const addressTo = tx.to;
-        const transactionValue = Number(
-          ((Number(tx.value) / convertETHFactor) * ETHPrice).toFixed(2)
-        );
+          const coinValue = Number(
+            (Number(tx.value) / convertETHFactor).toFixed(18)
+          );
 
-        const coinValue = Number(
-          (Number(tx.value) / convertETHFactor).toFixed(18)
-        );
+          const weiTax = Number(tx.gasUsed) * Number(tx.gasPrice);
+          const transactionTax = Number(
+            ((weiTax / convertETHFactor) * ETHPrice).toFixed(2)
+          );
+          const transactionDate = new Date(Number(tx.timeStamp) * 1000);
+          const confirmed = Boolean(Number(tx.confirmations) > 0);
+          const txDataBalance = ETHBalanceData.find(
+            (tx) => tx?.blockData?.blockNumber === transactionBlockNumber
+          )?.blockData.amount;
 
-        const weiTax = Number(tx.gasUsed) * Number(tx.gasPrice);
-        const transactionTax = Number(
-          ((weiTax / convertETHFactor) * ETHPrice).toFixed(2)
-        );
-        const transactionDate = new Date(Number(tx.timeStamp) * 1000);
-        const confirmed = Boolean(Number(tx.confirmations) > 0);
-        const txDataBalance = ETHBalanceData.find(
-          (tx) => tx?.blockData?.blockNumber === transactionBlockNumber
-        )?.blockData.amount;
+          const txBalance = Number(
+            (Number(txDataBalance) / convertETHFactor).toFixed(18)
+          );
 
-        const txBalance = Number(
-          (Number(txDataBalance) / convertETHFactor).toFixed(18)
-        );
+          const isSend = Boolean(addressFrom === wallets.address);
 
-        const isSend = Boolean(addressFrom === wallets.address);
-
-        const transactionData = {
-          hash: transactionHash,
-          type: "ETH",
-          addressFrom: addressFrom,
-          addressTo: addressTo,
-          value: transactionValue,
-          coinValue: isSend ? -coinValue : coinValue,
-          confirmed: confirmed,
-          date: transactionDate,
-          fee: transactionTax,
-          balance: txBalance,
-        };
-        extract.push(transactionData);
-      });
+          const transactionData = {
+            hash: transactionHash,
+            type: "ETH",
+            addressFrom: addressFrom,
+            addressTo: addressTo,
+            value: transactionValue,
+            coinValue: isSend ? -coinValue : coinValue,
+            confirmed: confirmed,
+            date: transactionDate,
+            fee: transactionTax,
+            balance: txBalance,
+          };
+          extract.push(transactionData);
+        });
+      }
     } else if (wallets.type === "BTC") {
       const result = wallets.result as BTCBlock[];
       result.forEach((transaction) => {

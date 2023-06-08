@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-boolean-cast */
 import axios from "axios";
 import { CoinPrice } from "../Domain/getCoinPrice";
 import { Wallet } from "../entities/Wallet";
@@ -91,19 +92,26 @@ export async function handleWalletsExtract(Email: string) {
         if (transactionData.type === "ETH") {
           const promisesData = [];
           const txData = [];
-          response.data.result.forEach((transaction) => {
-            const transactionPromiseBalance = web3.eth.getBalance(
-              wallet.address,
-              transaction.blockNumber
-            );
-            promisesData.push(transactionPromiseBalance);
-            txData.push(transaction.blockNumber);
-          });
-          walletETHBalance.push({
-            address: wallet.address,
-            blockData: await Promise.all(promisesData),
-            txData,
-          });
+          const isContinue = !Boolean(
+            response.data.message === "No transactions found" ||
+              response.data.message === "NOTOK"
+          );
+          if (isContinue) {
+            response.data.result.forEach((transaction) => {
+              const transactionPromiseBalance = web3.eth.getBalance(
+                wallet.address,
+                transaction.blockNumber
+              );
+              promisesData.push(transactionPromiseBalance);
+              txData.push(transaction.blockNumber);
+            });
+
+            walletETHBalance.push({
+              address: wallet.address,
+              blockData: await Promise.all(promisesData),
+              txData,
+            });
+          }
         }
 
         return transactionData;
