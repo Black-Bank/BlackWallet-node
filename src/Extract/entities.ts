@@ -1,4 +1,5 @@
 export type ITxETH = {
+  blockNumber: string;
   hash: string;
   from: string;
   to: string;

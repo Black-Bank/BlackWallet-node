@@ -11,20 +11,20 @@ const resolver_1 = require("./Currency/resolver");
 const resolver_2 = require("./Extract/resolver");
 const TransactionResolver_1 = require("./Transaction/TransactionResolver");
 async function bootstrap() {
-  const server = new apollo_server_1.ApolloServer({
-    schema: await (0, type_graphql_1.buildSchema)({
-      resolvers: [
-        WalletResolver_1.WalletResolver,
-        BalanceResolver_1.BalanceResolver,
-        LoginResolver_1.AuthResolver,
-        resolver_1.CurrencyResolver,
-        resolver_2.ExtractResolver,
-        TransactionResolver_1.TransactionResolver,
-      ],
-    }),
-    introspection: true,
-  });
-  server.listen(Number.parseInt(process.env.PORT) || 4000);
+    const server = new apollo_server_1.ApolloServer({
+        schema: await (0, type_graphql_1.buildSchema)({
+            resolvers: [
+                WalletResolver_1.WalletResolver,
+                BalanceResolver_1.BalanceResolver,
+                LoginResolver_1.AuthResolver,
+                resolver_1.CurrencyResolver,
+                resolver_2.ExtractResolver,
+                TransactionResolver_1.TransactionResolver,
+            ],
+        }),
+        introspection: true,
+    });
+    server.listen(Number.parseInt(process.env.PORT) || 4000);
 }
 exports.bootstrap = bootstrap;
 bootstrap();
