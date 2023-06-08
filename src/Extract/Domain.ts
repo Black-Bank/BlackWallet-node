@@ -6,7 +6,7 @@ require("dotenv").config({ path: dotenvPath });
 
 interface IETHBalanceData {
   address: string;
-  blockData: { amount: string; blockNumber: string };
+  blockData: { amount: number; blockNumber: string };
 }
 export const ExtractDomain = async (
   transactionsResults: ITxService[],

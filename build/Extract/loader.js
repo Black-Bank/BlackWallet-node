@@ -73,18 +73,6 @@ async function handleWalletsExtract(Email) {
             transactionsPromises.push(promiseWithAddress);
         });
     }
-    // web3.eth
-    //   .getBalance("0xa538071dd679c3457109f70743c394f3819cb73a", "17296893")
-    //   .then((balance) => {
-    //     console.log(
-    //       "Saldo atual da carteira:",
-    //       web3.utils.fromWei(balance, "ether"),
-    //       "ETH"
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     console.error("Erro ao obter o saldo da carteira:", error);
-    //   });
     const walletETHBalance = [];
     const transactionsResults = await Promise.all(transactionsPromises.map((wallet) => wallet.promise.then(async (response) => {
         const transactionData = {
@@ -115,7 +103,7 @@ async function handleWalletsExtract(Email) {
             return {
                 address: address,
                 blockData: {
-                    amount: Number(block),
+                    amount: block,
                     blockNumber: txData[index],
                 },
             };
