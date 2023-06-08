@@ -20,7 +20,7 @@ export async function AuthUser(Email: string, password: string) {
     return new Promise<boolean>((resolve) => {
       mongodb.connect(url, (erro: { message: string }, banco) => {
         if (erro) {
-          throw erro;
+          resolve(false);
         }
         const dbo = banco.db("userInfo");
 
@@ -35,7 +35,9 @@ export async function AuthUser(Email: string, password: string) {
               passwordAuth,
               resultado.senha,
               function (err, AuthResponse) {
-                if (err) throw err;
+                if (err) {
+                  resolve(false);
+                }
                 resolve(Boolean(AuthResponse));
               }
             );
