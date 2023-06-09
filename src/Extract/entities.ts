@@ -10,7 +10,7 @@ export type ITxETH = {
   confirmations: string;
 };
 
-type ETHBlock = {
+export type ETHBlock = {
   blockNumber: string;
   timeStamp: string;
   hash: string;
@@ -32,7 +32,7 @@ type ETHBlock = {
   methodId: string;
   functionName: string;
 };
-export type ETHTxType = { result: ETHBlock[] };
+export type ETHTxType = { result: ETHBlock[] | string };
 
 type IVin = {
   txid: string;

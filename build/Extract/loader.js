@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleWalletsExtract = void 0;
+/* eslint-disable no-extra-boolean-cast */
 const axios_1 = __importDefault(require("axios"));
 const getCoinPrice_1 = require("../Domain/getCoinPrice");
 const Domain_1 = require("./Domain");
@@ -83,16 +84,20 @@ async function handleWalletsExtract(Email) {
         if (transactionData.type === "ETH") {
             const promisesData = [];
             const txData = [];
-            response.data.result.forEach((transaction) => {
-                const transactionPromiseBalance = web3.eth.getBalance(wallet.address, transaction.blockNumber);
-                promisesData.push(transactionPromiseBalance);
-                txData.push(transaction.blockNumber);
-            });
-            walletETHBalance.push({
-                address: wallet.address,
-                blockData: await Promise.all(promisesData),
-                txData,
-            });
+            const isContinue = !Boolean(response.data.message === "No transactions found" ||
+                response.data.message === "NOTOK");
+            if (isContinue) {
+                response.data.result.forEach((transaction) => {
+                    const transactionPromiseBalance = web3.eth.getBalance(wallet.address, transaction.blockNumber);
+                    promisesData.push(transactionPromiseBalance);
+                    txData.push(transaction.blockNumber);
+                });
+                walletETHBalance.push({
+                    address: wallet.address,
+                    blockData: await Promise.all(promisesData),
+                    txData,
+                });
+            }
         }
         return transactionData;
     })));
