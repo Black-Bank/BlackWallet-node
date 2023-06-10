@@ -78,8 +78,8 @@ async function getRecommendedBitcoinFee(coin, addressFrom, addressTo, value, pri
         // Calcular o tamanho real da transação em bytes
         const transactionSizeBytes = transactionHex.length / 2;
         const response = await axios_1.default.get("https://mempool.space/api/v1/fees/recommended");
-        const fastestFee = response.data.fastestFee;
-        const halfHourFee = response.data.halfHourFee;
+        const fastestFee = response.data.minimumFee * 3;
+        const halfHourFee = response.data.minimumFee * 2;
         const minimumFee = response.data.minimumFee;
         const recommendedFastestFee = Math.ceil(fastestFee * transactionSizeBytes);
         const MediumFee = Math.ceil(halfHourFee * transactionSizeBytes);
