@@ -68,6 +68,8 @@ const ExtractDomain = async (
             (Number(txDataBalance) / convertETHFactor).toFixed(18)
           );
           const isSend = Boolean(addressFrom === wallets.address);
+          const currentDate = new Date();
+          const futureHalfHour = new Date(currentDate.getTime() + 3 * 60000);
           const transactionData = {
             hash: transactionHash,
             type: "ETH",
@@ -76,7 +78,7 @@ const ExtractDomain = async (
             value: transactionValue,
             coinValue: isSend ? -coinValue : coinValue,
             confirmed: confirmed,
-            date: transactionDate,
+            date: confirmed ? transactionDate : futureHalfHour,
             fee: transactionTax,
             balance: txBalance,
           };
@@ -113,6 +115,8 @@ const ExtractDomain = async (
           (Number(transaction.fee) / convertBTCFactor).toFixed(9)
         );
         const isSend = Boolean(addressFrom === wallets.address);
+        const currentDate = new Date();
+        const futureHalfHour = new Date(currentDate.getTime() + 30 * 60000);
         const transactionData = {
           hash: transactionHash,
           type: "BTC",
@@ -121,7 +125,7 @@ const ExtractDomain = async (
           value: isSend ? -transactionValue : transactionValue,
           coinValue: isSend ? -coinValue : coinValue,
           confirmed: transaction.status.confirmed,
-          date: transactionDate,
+          date: transaction.status.confirmed ? transactionDate : futureHalfHour,
           fee: transactionTax,
           prevout: prevoutValue,
         };

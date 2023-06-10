@@ -69,6 +69,8 @@ export const ExtractDomain = async (
           );
 
           const isSend = Boolean(addressFrom === wallets.address);
+          const currentDate = new Date();
+          const futureHalfHour = new Date(currentDate.getTime() + 3 * 60000);
 
           const transactionData = {
             hash: transactionHash,
@@ -78,7 +80,7 @@ export const ExtractDomain = async (
             value: transactionValue,
             coinValue: isSend ? -coinValue : coinValue,
             confirmed: confirmed,
-            date: transactionDate,
+            date: confirmed ? transactionDate : futureHalfHour,
             fee: transactionTax,
             balance: txBalance,
           };
@@ -119,6 +121,8 @@ export const ExtractDomain = async (
         );
 
         const isSend = Boolean(addressFrom === wallets.address);
+        const currentDate = new Date();
+        const futureHalfHour = new Date(currentDate.getTime() + 30 * 60000);
 
         const transactionData = {
           hash: transactionHash,
@@ -128,7 +132,7 @@ export const ExtractDomain = async (
           value: isSend ? -transactionValue : transactionValue,
           coinValue: isSend ? -coinValue : coinValue,
           confirmed: transaction.status.confirmed,
-          date: transactionDate,
+          date: transaction.status.confirmed ? transactionDate : futureHalfHour,
           fee: transactionTax,
           prevout: prevoutValue,
         };
