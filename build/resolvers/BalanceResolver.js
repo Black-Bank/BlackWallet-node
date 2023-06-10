@@ -29,8 +29,13 @@ let BalanceResolver = class BalanceResolver {
     async CoinPrice(coin) {
         return await (0, getCoinPrice_1.CoinPrice)(coin);
     }
-    async getTransferInfo(coin) {
-        return await (0, getTransferFee_1.getRecommendedBitcoinFee)(coin);
+    async getTransferInfo(coin, addressFrom, addressTo, value, privateKey) {
+        if (coin === "BTC") {
+            return await (0, getTransferFee_1.getRecommendedBitcoinFee)(coin, addressFrom, addressTo, value, privateKey);
+        }
+        else {
+            return await (0, getTransferFee_1.getRecommendedBitcoinFee)(coin);
+        }
     }
     async getFormatedData(Email) {
         return await (0, formatedData_1.FormatedData)(Email);
@@ -58,8 +63,12 @@ __decorate([
 __decorate([
     (0, type_graphql_1.Query)(() => InfoTransfer_1.TransferInfo),
     __param(0, (0, type_graphql_1.Arg)("coin")),
+    __param(1, (0, type_graphql_1.Arg)("addressFrom")),
+    __param(2, (0, type_graphql_1.Arg)("addressTo")),
+    __param(3, (0, type_graphql_1.Arg)("value")),
+    __param(4, (0, type_graphql_1.Arg)("privateKey")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String, String, Number, String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolver.prototype, "getTransferInfo", null);
 __decorate([

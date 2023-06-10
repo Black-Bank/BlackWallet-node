@@ -22,8 +22,24 @@ export class BalanceResolver {
   }
 
   @Query(() => TransferInfo)
-  async getTransferInfo(@Arg("coin") coin: string): Promise<TransferInfo> {
-    return await getRecommendedBitcoinFee(coin);
+  async getTransferInfo(
+    @Arg("coin") coin: string,
+    @Arg("addressFrom") addressFrom?: string,
+    @Arg("addressTo") addressTo?: string,
+    @Arg("value") value?: number,
+    @Arg("privateKey") privateKey?: string
+  ): Promise<TransferInfo> {
+    if (coin === "BTC") {
+      return await getRecommendedBitcoinFee(
+        coin,
+        addressFrom,
+        addressTo,
+        value,
+        privateKey
+      );
+    } else {
+      return await getRecommendedBitcoinFee(coin);
+    }
   }
   @Query(() => [Wallet])
   async getFormatedData(@Arg("Email") Email: string): Promise<Array<Wallet>> {
