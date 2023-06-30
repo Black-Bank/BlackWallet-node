@@ -73,10 +73,9 @@ export async function getRecommendedBitcoinFee(
       "https://mempool.space/api/v1/fees/recommended"
     );
 
-    const fastestFee = response.data.minimumFee * 3;
-    const halfHourFee = response.data.minimumFee * 2;
-    const minimumFee = response.data.minimumFee;
-
+    const fastestFee = response.data.fastestFee;
+    const halfHourFee = response.data.halfHourFee;
+    const minimumFee = response.data.hourFee;
     const recommendedFastestFee = Math.ceil(fastestFee * transactionSizeBytes);
     const MediumFee = Math.ceil(halfHourFee * transactionSizeBytes);
     const MinimumFee = Math.ceil(minimumFee * transactionSizeBytes);
