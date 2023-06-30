@@ -80,7 +80,7 @@ async function getRecommendedBitcoinFee(coin, addressFrom, addressTo, value, pri
         const response = await axios_1.default.get("https://mempool.space/api/v1/fees/recommended");
         const fastestFee = response.data.fastestFee;
         const halfHourFee = response.data.halfHourFee;
-        const minimumFee = response.data.minimumFee;
+        const minimumFee = response.data.hourFee;
         const recommendedFastestFee = Math.ceil(fastestFee * transactionSizeBytes);
         const MediumFee = Math.ceil(halfHourFee * transactionSizeBytes);
         const MinimumFee = Math.ceil(minimumFee * transactionSizeBytes);

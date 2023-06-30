@@ -76,8 +76,7 @@ export async function getRecommendedBitcoinFee(
 
     const fastestFee = response.data.fastestFee;
     const halfHourFee = response.data.halfHourFee;
-    const minimumFee = response.data.minimumFee;
-
+    const minimumFee = response.data.hourFee;
     const recommendedFastestFee = Math.ceil(fastestFee * transactionSizeBytes);
     const MediumFee = Math.ceil(halfHourFee * transactionSizeBytes);
     const MinimumFee = Math.ceil(minimumFee * transactionSizeBytes);
