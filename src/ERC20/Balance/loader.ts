@@ -8,7 +8,7 @@ export const BalanceLoaderERC20 = async (
   contractFactor: number,
   contractType: string
 ) => {
-  const url = `${process.env.BASE_PAYMENT_URL}/balance/total`;
+  const url = `${process.env.PROD_BASE_PAYMENT_URL}/balance/total`;
   const headers: AxiosRequestConfig["headers"] = {
     "Content-Type": "application/json",
     Authorization: `${process.env.PROD_PAYMENT_AUTH_TOKEN}`,

@@ -7,7 +7,7 @@ exports.BalanceLoaderERC20 = void 0;
 const axios_1 = __importDefault(require("axios"));
 const Domain_1 = require("./Domain");
 const BalanceLoaderERC20 = async (name, address, contractAddress, contractFactor, contractType) => {
-    const url = `${process.env.BASE_PAYMENT_URL}/balance/total`;
+    const url = `${process.env.PROD_BASE_PAYMENT_URL}/balance/total`;
     const headers = {
         "Content-Type": "application/json",
         Authorization: `${process.env.PROD_PAYMENT_AUTH_TOKEN}`,
