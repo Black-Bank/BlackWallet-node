@@ -49,10 +49,8 @@ export async function getRecommendedBitcoinFee(
     const txb = new bitcore.Transaction();
 
     // Add inputs to the transaction builder
-    let inputAmount = 0;
     bitcoreUtxos.forEach((utxo) => {
       txb.from(utxo);
-      inputAmount += utxo.satoshis;
     });
 
     // Calculate output amount and add recipient output
