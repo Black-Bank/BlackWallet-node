@@ -11,6 +11,7 @@ const resolver_1 = require("./Currency/resolver");
 const resolver_2 = require("./Extract/resolver");
 const TransactionResolver_1 = require("./Transaction/TransactionResolver");
 const resolver_3 = require("./ERC20/Balance/resolver");
+const resolver_4 = require("./ERC20/Transaction/resolver");
 async function bootstrap() {
     const server = new apollo_server_1.ApolloServer({
         schema: await (0, type_graphql_1.buildSchema)({
@@ -22,6 +23,7 @@ async function bootstrap() {
                 resolver_2.ExtractResolver,
                 TransactionResolver_1.TransactionResolver,
                 resolver_3.BalanceResolverERC20,
+                resolver_4.SendTokenResolverERC20,
             ],
         }),
         introspection: true,
