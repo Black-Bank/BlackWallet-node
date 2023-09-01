@@ -16,20 +16,30 @@ exports.BalanceResolverERC20 = void 0;
 const type_graphql_1 = require("type-graphql");
 const loader_1 = require("./loader");
 const entities_1 = require("./entities");
+const Domain_1 = require("./Domain");
 let BalanceResolverERC20 = class BalanceResolverERC20 {
-    async getContractBalance(name, address, contractAddress, contractFactor, contractType) {
+    async getContractBalance(name, email) {
+        const wallet = (await (0, Domain_1.getERC20Wallet)({ email, name }));
+        const address = wallet.address;
+        let contractAddress = "";
+        let contractFactor = 1;
+        let contractType = "";
+        switch (name) {
+            case "PRINCIPAL" || "DOLLAR":
+                contractAddress = "0xdac17f958d2ee523a2206206994597c13d831ec7";
+                contractFactor = 1000000;
+                contractType = "Dollar";
+                break;
+        }
         return await (0, loader_1.BalanceLoaderERC20)(name, address, contractAddress, contractFactor, contractType);
     }
 };
 __decorate([
     (0, type_graphql_1.Query)(() => entities_1.ResponseContract),
     __param(0, (0, type_graphql_1.Arg)("name")),
-    __param(1, (0, type_graphql_1.Arg)("address")),
-    __param(2, (0, type_graphql_1.Arg)("contractAddress")),
-    __param(3, (0, type_graphql_1.Arg)("contractFactor")),
-    __param(4, (0, type_graphql_1.Arg)("contractType")),
+    __param(1, (0, type_graphql_1.Arg)("email")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Number, String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], BalanceResolverERC20.prototype, "getContractBalance", null);
 BalanceResolverERC20 = __decorate([
